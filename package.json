@@ -1,0 +1,48 @@
+{
+  "name": "storefront-example",
+  "version": "0.1.0",
+  "description": "Example Storefront flux/react application.",
+  "main": "app/main.js",
+  "scripts": {
+    "build": "NODE_ENV=production browserify app/main.jsx -o ./bundle.js --standalone App",
+    "watch": "watchify app/main.jsx -o ./bundle.js --standalone App",
+    "dev": "http-server & npm run watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "storefront",
+    "react",
+    "flux",
+    "example"
+  ],
+  "author": "Matt McCray <matt@elucidata.net>",
+  "license": "MIT",
+  "dependencies": {
+    "storefront": "^0.3.0",
+    "reactify": "^0.17.1",
+    "browserify": "^6.3.2",
+    "envify": "^3.2.0",
+    "react": "^0.12.1",
+    "watchify": "^2.1.1",
+    "elucidata-type": "^1.1.1",
+    "react-prefixr": "0.0.3",
+    "http-server": "^0.7.3"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true,
+          "everything": true
+        }
+      ],
+      [
+        "envify",
+        {
+          "NODE_ENV": "production"
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+*.sass-cache
+*.dot.*
+
+# OS or Editor folders
+.DS_Store
+.cache
+.project
+.settings
+.tmproj
+.idea
+.zedstate
+.tags
+nbproject
+Thumbs.db
+tags
+*.sublime-workspace
+
+# NPM packages folder.
+node_modules/

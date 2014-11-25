@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <title>Storefront Example</title>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+      :root {
+        font-family: "Helvetica Neue", Sans-Serif;
+        font-weight: 300;
+        background: #E0E0E0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      body {
+        margin: 0;
+        width: 500px;
+        margin: 0 auto;
+        background: #FFF;
+        height: 100vh;
+        overflow: auto;
+        border: 1px solid silver;
+        box-shadow: 0px 0px 5px gray;
+        border-top: 0px;
+        border-bottom: 0px;
+      }
+
+      h1 {
+        font-weight: 100;
+        padding-left: 40px;
+        margin: 0;
+        margin-top: 40px;
+      }
+
+      .project-item {
+        padding: 5px 2px;
+      }
+
+      .project-item.add {
+        padding-left: 40px;
+      }
+
+      .project-item.add a {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .project-item .name, .project-item .time, .project-item .entry-count {
+        margin-left: 1em;
+      }
+
+      .entry-count {
+        color: silver;
+        font-weight: 100;
+        font-size: 75%;
+      }
+
+      .active .time {
+        color: red;
+      }
+
+      .form-error {
+        transition: opacity 250ms ease-out;
+        color: red;
+      }
+
+      i {
+        cursor: pointer;
+      }
+
+      i[disabled] {
+        opacity: 0.2;
+        pointer-events: none;
+        cursor: default;
+      }
+    </style>
+  </head>
+  <body>
+    <blockquote>If you see this, then an error occured or you forgot to run <tt>npm run build</tt>!</blockquote>
+  </body>
+  <script src="bundle.js"></script>
+</html>
