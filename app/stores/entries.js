@@ -1,44 +1,39 @@
 var Storefront= require( 'storefront'),
     uid= require( 'storefront/lib/uid'),
-    merge= require( 'storefront/lib/merge')
+    merge= require( 'storefront/lib/merge'),
+    Validator= require( '../lib/validator.js')
 
 module.exports=
 Storefront.define( 'Entries', ( mgr)=>{
   var {actions, handles, observes, provides}= mgr,
-      timerStore= mgr.getStore( 'Timer')
+      isValid= Validator.schemaChecker( mgr, 'entry'),
+      timer= mgr.getStore( 'Timer')
 
-  actions({
-    add( dispatch, data) {
-      // TODO: Validate data
-      dispatch( data)
-    }
-  })
+  var _entries= []
 
   handles({
+
     add( action) {
-      _entries.push(
-        merge({
-          id: uid(),
-          created: (new Date()).getTime()
-        }, action.payload)
-      )
-      mgr.dataHasChanged()
+      if( isValid( action.payload)) {
+        _entries.push( action.payload)
+        mgr.dataHasChanged()
+      }
     }
   })
 
-  observes( timerStore, {
+  observes( timer, {
 
     stop( action) {
-      console.log("Timer stopped, adding entry!")
+      console.log( "Timer stopped, adding entry!")
       mgr.getClerk().add({
-        projectId: timerStore.getProjectId(),
-        duration: timerStore.duration(),
-        started: timerStore.startedAt()
+        id: uid(),
+        created: (new Date()).getTime(),
+        projectId: timer.getProjectId(),
+        duration: timer.duration(),
+        started: timer.startedAt()
       })
     }
   })
-
-  var _entries= []
 
   provides({
 
@@ -48,10 +43,10 @@ Storefront.define( 'Entries', ( mgr)=>{
 
     entriesForProject( id) {
       id = id.id || id // Handle id project.id
-      return _entries.filter(( entry)=>{
-        return entry.projectId === id
-      })
+      return _entries.
+        filter(( entry)=>{
+          return entry.projectId === id
+        })
     }
-
   })
 })

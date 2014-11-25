@@ -1,28 +1,20 @@
 var Storefront= require( 'storefront'),
-    kind= require( 'elucidata-type')
+    kind= require( 'elucidata-type'),
+    Validator= require( '../lib/validator.js')
 
 module.exports=
 Storefront.define( 'Timer', ( mgr)=>{
-  var {actions, handles, observes, provides}= mgr
+  var {actions, handles, observes, provides}= mgr,
+      isNotEmpty= Validator.emptyObjectChecker( mgr)
 
-  actions({
-
-    start( dispatch, projectId) {
-      if( kind.isEmpty( projectId)) {
-        return mgr.notify('Project ID cannot be empty.')
-      }
-      projectId= projectId.id || projectId
-      dispatch({ projectId })
-    },
-
-    stop( dispatch) { dispatch() },
-    cancel( dispatch) { dispatch() }
-  })
+  var active, currentProject, startedAt, _timer
 
   handles({
 
     start( action) {
-      startTracking( action.payload.projectId)
+      if( isNotEmpty({ projectId:action.payload })) {
+        startTracking( action.payload)
+      }
     },
 
     cancel( action) {
@@ -34,8 +26,6 @@ Storefront.define( 'Timer', ( mgr)=>{
       stopTracking()
     }
   })
-
-  var active, currentProject, startedAt, _timer
 
   provides({
 

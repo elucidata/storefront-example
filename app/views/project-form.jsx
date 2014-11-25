@@ -31,7 +31,7 @@ React.createClass({
       this.props.onClose()
     }
     else {
-      this.setState({ error:e.message, showError:true }, ()=> {
+      this.setState({ error:e.errors[0].message, showError:true }, ()=> {
         this.refs.name.getDOMNode().focus()
       })
     }

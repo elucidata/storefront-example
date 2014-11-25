@@ -6,7 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production browserify app/main.jsx -o ./bundle.js --standalone App",
     "watch": "watchify app/main.jsx -o ./bundle.js --standalone App",
-    "dev": "http-server & npm run watch",
+    "dev": "npm run build; http-server & npm run watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -18,7 +18,7 @@
   "author": "Matt McCray <matt@elucidata.net>",
   "license": "MIT",
   "dependencies": {
-    "storefront": "^0.3.0",
+    "storefront": "^0.4.0",
     "reactify": "^0.17.1",
     "browserify": "^6.3.2",
     "envify": "^3.2.0",
@@ -26,7 +26,9 @@
     "watchify": "^2.1.1",
     "elucidata-type": "^1.1.1",
     "react-prefixr": "0.0.3",
-    "http-server": "^0.7.3"
+    "http-server": "^0.7.3",
+    "tv4": "^1.1.4",
+    "tv4-formats": "^0.5.1"
   },
   "browserify": {
     "transform": [
