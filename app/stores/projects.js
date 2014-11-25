@@ -45,7 +45,7 @@ Storefront.define( 'Projects', ( mgr)=>{
       if( isNotEmpty({ id })) {
         _projects= _projects.
           filter(( project)=>{
-            return project.id !== action.payload.id
+            return project.id !== id
           })
       }
       if( len !== _projects.length ) {
