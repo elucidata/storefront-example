@@ -4,12 +4,12 @@ var Storefront= require( 'storefront'),
 
 module.exports=
 Storefront.define( 'Timer', ( mgr)=>{
-  var {actions, handles, observes, provides}= mgr,
+  var {actions, outlets, observes, before}= mgr,
       isNotEmpty= Validator.emptyObjectChecker( mgr)
 
   var active, currentProject, startedAt, _timer
 
-  handles({
+  actions({
 
     start( action) {
       if( isNotEmpty({ projectId:action.payload })) {
@@ -27,7 +27,7 @@ Storefront.define( 'Timer', ( mgr)=>{
     }
   })
 
-  provides({
+  outlets({
 
     isActive() { return active },
     getProjectId() { return currentProject },

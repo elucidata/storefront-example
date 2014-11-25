@@ -5,13 +5,14 @@ var Storefront= require( 'storefront'),
 
 module.exports=
 Storefront.define( 'Entries', ( mgr)=>{
-  var {actions, handles, observes, provides}= mgr,
+
+  var {actions, outlets, observes, before}= mgr,
       isValid= Validator.schemaChecker( mgr, 'entry'),
       timer= mgr.getStore( 'Timer')
 
   var _entries= []
 
-  handles({
+  actions({
 
     add( action) {
       if( isValid( action.payload)) {
@@ -35,7 +36,7 @@ Storefront.define( 'Entries', ( mgr)=>{
     }
   })
 
-  provides({
+  outlets({
 
     allEntries() {
       return _entries

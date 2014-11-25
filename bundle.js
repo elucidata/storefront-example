@@ -148,13 +148,14 @@ var Storefront= require( 'storefront'),
 
 module.exports=
 Storefront.define( 'Entries', function( mgr){
-  var $__0=    mgr,actions=$__0.actions,handles=$__0.handles,observes=$__0.observes,provides=$__0.provides,
+
+  var $__0=    mgr,actions=$__0.actions,outlets=$__0.outlets,observes=$__0.observes,before=$__0.before,
       isValid= Validator.schemaChecker( mgr, 'entry'),
       timer= mgr.getStore( 'Timer')
 
   var _entries= []
 
-  handles({
+  actions({
 
     add:function( action) {
       if( isValid( action.payload)) {
@@ -178,7 +179,7 @@ Storefront.define( 'Entries', function( mgr){
     }
   })
 
-  provides({
+  outlets({
 
     allEntries:function() {
       return _entries
@@ -202,13 +203,13 @@ var Storefront= require( 'storefront'),
 
 module.exports=
 Storefront.define( 'Projects', function( mgr){
-  var $__0=     mgr,actions=$__0.actions,handles=$__0.handles,observes=$__0.observes,provides=$__0.provides,notify=$__0.notify,
+  var $__0=     mgr,actions=$__0.actions,outlets=$__0.outlets,observes=$__0.observes,before=$__0.before,notify=$__0.notify,
       isValid= Validator.schemaChecker( mgr, 'project'),
       isNotEmpty= Validator.emptyObjectChecker( mgr)
 
   var _projects= []
 
-  handles({
+  actions({
 
     add:function( action) {
       var name= action.payload
@@ -251,7 +252,7 @@ Storefront.define( 'Projects', function( mgr){
     }
   })
 
-  provides({
+  outlets({
 
     get:function( id) {
       return _projects.
@@ -322,12 +323,12 @@ var Storefront= require( 'storefront'),
 
 module.exports=
 Storefront.define( 'Timer', function( mgr){
-  var $__0=    mgr,actions=$__0.actions,handles=$__0.handles,observes=$__0.observes,provides=$__0.provides,
+  var $__0=    mgr,actions=$__0.actions,outlets=$__0.outlets,observes=$__0.observes,before=$__0.before,
       isNotEmpty= Validator.emptyObjectChecker( mgr)
 
   var active, currentProject, startedAt, _timer
 
-  handles({
+  actions({
 
     start:function( action) {
       if( isNotEmpty({ projectId:action.payload })) {
@@ -345,7 +346,7 @@ Storefront.define( 'Timer', function( mgr){
     }
   })
 
-  provides({
+  outlets({
 
     isActive:function() { return active },
     getProjectId:function() { return currentProject },
@@ -21151,16 +21152,18 @@ module.exports= (function(){
     this.expose( this.$Manager_changeEvent.public)
 
     bindAll( this,
-      'dispatch', 'notify', 'action', 'handle', 'waitFor',
-      'hasChanged', 'expose', 'getClerk', 'getStore', 'createEvent'
+      'dispatch', 'notify', 'actions', 'waitFor', 'hasChanged', 'before',
+      'expose', 'getClerk', 'getStore', 'createEvent', 'invoke'
     )
 
-    alias( this, 'action', 'actions')
+    alias( this, 'actions', 'action', 'observe', 'observes')
     alias( this, 'getStore', 'get')
-    alias( this, 'handle', 'handles', 'observe', 'observes')
-    alias( this, 'expose', 'exposes', 'provide', 'provides')
+    alias( this, 'expose', 'exposes', 'outlet', 'outlets')
     alias( this, 'createEvent', 'defineEvent')
     alias( this, 'hasChanged', 'dataDidChange', 'dataHasChanged')
+
+    // alias( this, 'handle', 'handles', 'observe', 'observes')
+    // alias( this, 'expose', 'exposes', 'provide', 'provides')
 
     if( instance.token == null) {  // jshint ignore:line
       instance.token= runtime.dispatcher.register(function( action){
@@ -21187,13 +21190,20 @@ module.exports= (function(){
         callback
       )
     }
+    return this
+  };
+
+  Manager.prototype.invoke=function(cmd)  {"use strict";for (var params=[],$__0=1,$__1=arguments.length;$__0<$__1;$__0++) params.push(arguments[$__0]);
+    return this.$Manager_instance[ cmd].apply( this.$Manager_instance, params)
   };
 
   Manager.prototype.notify=function(message) {"use strict";
     this.$Manager_notifyEvent.emit( message)
+    return this
   };
 
-  Manager.prototype.action=function(methods) {"use strict";
+  Manager.prototype.before=function(methods) {"use strict";
+    var actionDispatchers= {}
     Object.keys( methods).forEach(function( actionName) {
       var eventName= this.name +'_'+ actionName,
           fn= methods[ actionName],
@@ -21202,9 +21212,10 @@ module.exports= (function(){
       fn.displayName= eventName
       this.$Manager_instance[ actionName]= fn.bind( this.$Manager_instance, boundDispatch)
     }.bind(this))
+    return this
   };
 
-  Manager.prototype.handle=function(store, methods) {"use strict";
+  Manager.prototype.actions=function(store, methods) {"use strict";
     if( arguments.length === 1) {
       methods= store
       store= this.name
@@ -21231,9 +21242,10 @@ module.exports= (function(){
             dispatch( args)
           }
         }
-        this.action( stub)
+        this.before( stub)
       }
     }.bind(this))
+    return this
   };
 
   Manager.prototype.waitFor=function()  {"use strict";for (var stores=[],$__0=0,$__1=arguments.length;$__0<$__1;$__0++) stores.push(arguments[$__0]);
@@ -21246,21 +21258,28 @@ module.exports= (function(){
       }
     }.bind(this))
     this.runtime.dispatcher.waitFor( stores)
+    return this
   };
 
   Manager.prototype.hasChanged=function() {"use strict";
     this.$Manager_changeEvent.emitFlat( arguments)
+    return this
   };
 
   Manager.prototype.expose=function(methods) {"use strict";
     Object.keys( methods).forEach(function( methodName){
       if( this.$Manager_instance.hasOwnProperty( methodName)) {
-        var error= new Error( "Redefining property "+ methodName +" on store "+ this.name)
-        error.framesToPop= 3
-        throw error
+        var method= this.$Manager_instance[ methodName]
+
+        if(! method.$Manager_isStub) {
+          var error= new Error( "Redefining property "+ methodName +" on store "+ this.name)
+          error.framesToPop= 3
+          throw error
+        }
       }
       this.$Manager_instance[ methodName]= methods[ methodName]
     }.bind(this))
+    return this
   };
 
   Manager.prototype.getClerk=function() {"use strict";
@@ -21380,11 +21399,11 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
       eventHelper: eventHelperMixin( this)
     }
 
-    // DEPRECATED: Remove in a future version...
-    alias( this, 'define', 'defineStore', 'Store', 'defineClerk', 'Clerk')
     alias( this, 'get', 'getInstance')
-    alias( this, 'onChange', 'onAnyChange')
-    alias( this, 'offChange', 'offAnyChange')
+    // DEPRECATED: Remove in a future version...
+    // alias( this, 'define', 'defineStore', 'Store', 'defineClerk', 'Clerk')
+    // alias( this, 'onChange', 'onAnyChange')
+    // alias( this, 'offChange', 'offAnyChange')
   }
 
   Runtime.prototype.configure=function(settings) {"use strict";
@@ -21396,6 +21415,7 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
       verbose: false,
       singletonDispatcher: false
     }, settings || {})
+    return this
   };
 
   Runtime.prototype.newInstance=function() {"use strict";
@@ -21453,10 +21473,12 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
 
   Runtime.prototype.onChange=function(fn) {"use strict";
     this.$Runtime_anyChangeEvent.public.onAnyChange( fn)
+    return this
   };
 
   Runtime.prototype.offChange=function(fn) {"use strict";
     this.$Runtime_anyChangeEvent.public.offAnyChange( fn)
+    return this
   };
 
   Runtime.prototype.size=function() {"use strict";
@@ -21482,7 +21504,7 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
         this.$Runtime_buildFactory( info.name, info.builder, false)
       }.bind(this))
 
-    return this.getInstance( name)
+    return this.get( name)
   };
 
   Runtime.prototype.$Runtime_buildFactory=function(name, builder, saveBuilder) {"use strict";
@@ -21526,7 +21548,7 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
       this.$Runtime_builders.push({ name:name, builder:builder, manager:manager })
     }
 
-    return this.getInstance( name)
+    return this.get( name)
   };
 
   Runtime.prototype.$Runtime_trackChangeFor=function(name) {"use strict";

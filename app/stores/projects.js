@@ -5,13 +5,13 @@ var Storefront= require( 'storefront'),
 
 module.exports=
 Storefront.define( 'Projects', ( mgr)=>{
-  var {actions, handles, observes, provides, notify}= mgr,
+  var {actions, outlets, observes, before, notify}= mgr,
       isValid= Validator.schemaChecker( mgr, 'project'),
       isNotEmpty= Validator.emptyObjectChecker( mgr)
 
   var _projects= []
 
-  handles({
+  actions({
 
     add( action) {
       var name= action.payload
@@ -54,7 +54,7 @@ Storefront.define( 'Projects', ( mgr)=>{
     }
   })
 
-  provides({
+  outlets({
 
     get( id) {
       return _projects.
