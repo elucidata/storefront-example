@@ -103,18 +103,21 @@ module.exports= {
   }
 }
 
-},{"../stores/schema/entry.js":6,"../stores/schema/project.js":7,"elucidata-type":15,"tv4":194,"tv4-formats":191}],3:[function(require,module,exports){
-var Storefront= require( 'storefront'),
-    React= require( 'react/addons'),
+},{"../stores/schema/entry.js":6,"../stores/schema/project.js":7,"elucidata-type":15,"tv4":195,"tv4-formats":192}],3:[function(require,module,exports){
+var Storefront= require( 'storefront')
+
+Storefront.configure({
+  verbose: true,
+  useRAF: true,
+  logging: true
+})
+
+
+var React= require( 'react/addons'),
     projects= require( './stores/projects.js'),
     entries= require( './stores/entries.js'),
     timer= require( './stores/timer.js'),
     App= require( './views/app.jsx')
-
-Storefront.configure({
-  verbose: true,
-  useRAF: true
-})
 
 function renderApp() {
   console.log( '[Top-level render]')
@@ -133,12 +136,24 @@ projects.onChange(function() {return console.log( 'projects.onChanged');} )
 entries.onChange(function() {return console.log( 'entries.onChanged');} )
 timer.onChange(function() {return console.log( 'timer.onChanged');} )
 
+projects.onNotify(function() {return console.info( 'projects.onNotify', arguments);} )
+entries.onNotify(function() {return console.info( 'entries.onNotify', arguments);} )
+timer.onNotify(function() {return console.info( 'timer.onNotify', arguments);} )
+
 Storefront.onChange( renderApp)
 
 // For playing in the console...
 module.exports= { Storefront:Storefront, projects:projects, entries:entries, timer:timer }
 
 renderApp()
+
+console.log(
+  (" ******************************************************\n  You can access the Storefront object and the projects,\n  entries, and timer stores via the 'App' global.\n\n  Have fun!\n  ******************************************************"
+
+
+
+
+))
 
 },{"./stores/entries.js":4,"./stores/projects.js":5,"./stores/timer.js":8,"./views/app.jsx":9,"react/addons":16,"storefront":177}],4:[function(require,module,exports){
 var Storefront= require( 'storefront'),
@@ -195,7 +210,7 @@ Storefront.define( 'Entries', function( mgr){
   })
 })
 
-},{"../lib/validator.js":2,"storefront":177,"storefront/lib/merge":186,"storefront/lib/uid":189}],5:[function(require,module,exports){
+},{"../lib/validator.js":2,"storefront":177,"storefront/lib/merge":187,"storefront/lib/uid":190}],5:[function(require,module,exports){
 var Storefront= require( 'storefront'),
     uid= require( 'storefront/lib/uid'),
     kind= require( 'elucidata-type'),
@@ -283,7 +298,7 @@ Storefront.define( 'Projects', function( mgr){
 
 })
 
-},{"../lib/validator.js":2,"elucidata-type":15,"storefront":177,"storefront/lib/uid":189}],6:[function(require,module,exports){
+},{"../lib/validator.js":2,"elucidata-type":15,"storefront":177,"storefront/lib/uid":190}],6:[function(require,module,exports){
 module.exports=
 {
   "$schema": "http://json-schema.org/schema#",
@@ -572,7 +587,7 @@ React.createClass({displayName: 'exports',
   render:function() {
     return (
       React.createElement("ul", null, 
-         this.props.projects.map(function( project) {return React.createElement(ProjectItem, React.__spread({},  project));})
+         this.props.projects.map(function( project) {return React.createElement(ProjectItem, React.__spread({key:  project.id},  project));})
       )
     )
   }
@@ -20871,17 +20886,17 @@ var Runtime= require( './lib/runtime')
 // module.exports= Runtime.newInstance()
 module.exports= new Runtime()
 
-},{"./lib/runtime":188}],178:[function(require,module,exports){
+},{"./lib/runtime":189}],178:[function(require,module,exports){
 module.exports=
 function alias(/* target, prop, ...aliases */) {
   var aliases= Array.prototype.slice.call( arguments),
       target= aliases.shift(),
       prop= aliases.shift(),
-      item= target[ prop] //.bind( target)
+      item= target[ prop]
+
   aliases.forEach(function( alias){
     target[ alias]= item
   })
-  // target[ prop]= item
 }
 
 },{}],179:[function(require,module,exports){
@@ -20891,24 +20906,79 @@ module.exports=
 function bindAll(/* target, ...props */) {
   var props= Array.prototype.slice.call( arguments),
       target= props.shift()
+
   props.forEach(function( key){
     var prop= target[ key]
     if( prop && kind.isFunction( prop)) {
       target[ key]= prop.bind( target)
     }
   })
+
   return target
 }
 
-},{"elucidata-type":190}],180:[function(require,module,exports){
+},{"elucidata-type":191}],180:[function(require,module,exports){
 module.exports=
 function camelize( string) {
-  return string.replace( /(?:^|[-_])(\w)/g, function( _, c) {
-    return c ? c.toUpperCase () : ''
+  return string.replace( /(?:^|[-_])(\w)/g, function( _, char) {
+    return char ? char.toUpperCase () : ''
   })
 }
 
 },{}],181:[function(require,module,exports){
+(function (global){
+// Based on: https://github.com/paulmillr/console-polyfill/blob/master/index.js
+module.exports=
+(function( con) {
+  var prop, method,
+      empty= {},
+      dummy= function() {},
+      properties= [
+        'memory'
+      ],
+      methods= [
+        'assert',
+        'clear',
+        'count',
+        'debug',
+        'dir',
+        'dirxml',
+        'error',
+        'exception',
+        'group',
+        'groupCollapsed',
+        'groupEnd',
+        'info',
+        'log',
+        'markTimeline',
+        'profile',
+        'profiles',
+        'profileEnd',
+        'show',
+        'table',
+        'time',
+        'timeEnd',
+        'timeline',
+        'timelineEnd',
+        'timeStamp',
+        'trace',
+        'warn'
+      ]
+
+  while( prop= properties.pop()) {  // jshint ignore:line
+    con[ prop]= con[ prop] || empty
+  }
+
+  while( method= methods.pop()) {  // jshint ignore:line
+    con[ method]= con[ method] || dummy
+  }
+
+  return con
+
+})( global.console= global.console || {})
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],182:[function(require,module,exports){
 (function (process){
 var camelize= require( './camelize'),
     flatten= require( './flatten')
@@ -20957,126 +21027,130 @@ function createEvent( baseName, eventName, emitter) {
 }
 
 }).call(this,require('_process'))
-},{"./camelize":180,"./flatten":184,"_process":14}],182:[function(require,module,exports){
-(function (global){
-var uid= require('./uid'),
-    now= require('./now')
+},{"./camelize":180,"./flatten":185,"_process":14}],183:[function(require,module,exports){
+var uid= require( './uid'),
+    now= require( './now'),
+    console= require( './console')  // jshint ignore:line
 
-var THRESHOLD= 10 // In milliseconds
+var THRESHOLD= 10, // In milliseconds
+    _singleton_instance= null,
+    _log_dispatches= false
 
-
+module.exports=
+(function(){
 
   function Dispatcher() {"use strict";
+    this.active= false
     this.$Dispatcher_handlers= {}
     this.$Dispatcher_processed= {}
     this.$Dispatcher_tokenList= []
     this.$Dispatcher_queue= []
-    this.active= false
   }
 
-  Dispatcher.prototype.$Dispatcher_destructor=function() {"use strict";
-    this.$Dispatcher_handlers= null
-    this.$Dispatcher_processed= null
-    this.$Dispatcher_tokenList= null
-    this.$Dispatcher_queue= null
-    this.active= false
-  };
-
-  Dispatcher.prototype.dispose=function() {"use strict";
-    this.$Dispatcher_destructor()
-  };
-
-  Dispatcher.prototype.register=function(handler, preferredToken)  {"use strict";
-    if( preferredToken && this.$Dispatcher_handlers.hasOwnProperty(preferredToken) ) {
+  Dispatcher.prototype.register=function(handler, preferredToken) {"use strict";
+    if( preferredToken && this.$Dispatcher_handlers.hasOwnProperty( preferredToken)) {
       preferredToken= uid()
     }
 
     var token = preferredToken || uid()
     this.$Dispatcher_handlers[token]= handler
-    this.$Dispatcher_tokenList= Object.keys( this.$Dispatcher_handlers )
+    this.$Dispatcher_tokenList= Object.keys( this.$Dispatcher_handlers)
     return token
   };
 
-  Dispatcher.prototype.deregister=function(token)  {"use strict";
+  Dispatcher.prototype.deregister=function(token) {"use strict";
     var handler;
-    if( handler= this.$Dispatcher_handlers[token] )  // jshint ignore:line
-        delete this.$Dispatcher_handlers[ token ]
+    if( handler= this.$Dispatcher_handlers[ token] )  // jshint ignore:line
+        delete this.$Dispatcher_handlers[ token]
     return handler
   };
 
-  Dispatcher.prototype.waitFor=function(tokens)  {"use strict";
-    if(! this.active ) return this
-    // Trigger each one
-    for (var i=0, l=tokens.length; i < l; i++) {
-      var token = tokens[ i ].token || tokens[ i ]
-      this.$Dispatcher_callHandler( token )
-    }
+  Dispatcher.prototype.waitFor=function(tokens) {"use strict";
+    if(! this.active) return this
+    (tokens || []).forEach(function( token){
+      // support waitFor params being store instances or store tokens:
+      this.$Dispatcher_callHandler( token.token || token)
+    }.bind(this))
     return this
   };
 
-  Dispatcher.prototype.dispatch=function(action, callback)  {"use strict";
+  Dispatcher.prototype.dispatch=function(action, callback) {"use strict";
     if( this.active ) {
-      this.$Dispatcher_queue.push([ action, callback ])
+      this.$Dispatcher_queue.push([ action, callback])
       return this
     }
 
     var length= this.$Dispatcher_tokenList.length,
-        index= 0, startTime, duration
+        index= 0, start_time, duration, label
+
+    if( _log_dispatches) {
+      label= action.type;
+      console.time( label)
+      console.group( label)
+    }
 
     if( length ) {
-      startTime= now()
+      start_time= now()
       this.active= true
       this.$Dispatcher_currentAction= action
       this.$Dispatcher_processed= {}
 
-      while( index < length ) {
-          this.$Dispatcher_callHandler( this.$Dispatcher_tokenList[ index ] )
+      while( index < length) {
+          this.$Dispatcher_callHandler( this.$Dispatcher_tokenList[ index])
           index += 1
       }
 
       this.$Dispatcher_currentAction= null
       this.active= false
 
-      duration= now() - startTime
+      duration= now() - start_time
 
-      if( duration > THRESHOLD ) {
-        global['console'].info('Dispatch of', action.type ,'took >', THRESHOLD, 'ms') // jshint ignore:line
+      if( duration > THRESHOLD) {
+        console.info( 'Dispatch of', action.type ,'took >', THRESHOLD, 'ms') // jshint ignore:line
+        // global[ 'console'].info( 'Dispatch of', action.type ,'took >', THRESHOLD, 'ms') // jshint ignore:line
       }
 
     }
 
-    if( callback ) callback() // Should the callback be sent anything?
+    if( _log_dispatches) {
+      console.groupEnd( label)
+      console.timeEnd( label)
+    }
 
-    if( this.$Dispatcher_queue.length ) {
+    if( callback) {
+      callback() // Should the callback be sent anything?
+    }
+
+    if( this.$Dispatcher_queue.length) {
       // Should this happen on the nextTick?
-      var queueAction= this.$Dispatcher_queue.shift()
-      this.dispatch( queueAction[0], queueAction[1])
+      var $__0=  this.$Dispatcher_queue.shift(),nextAction=$__0[0],nextCallback=$__0[1]
+      this.dispatch( nextAction, nextCallback)
     }
 
     return this
   };
 
-  Dispatcher.prototype.$Dispatcher_callHandler=function(token)  {"use strict";
-    if( this.$Dispatcher_processed[token] === true || ! this.active ) return
-    var handler= this.$Dispatcher_handlers[ token ]
-    handler.call( this, this.$Dispatcher_currentAction, this, token )
-    this.$Dispatcher_processed[ token ]= true
+  Dispatcher.prototype.$Dispatcher_callHandler=function(token) {"use strict";
+    if( this.$Dispatcher_processed[ token] === true || !this.active) return
+    var handler= this.$Dispatcher_handlers[ token]
+
+    handler.call( this, this.$Dispatcher_currentAction, this, token)
+    this.$Dispatcher_processed[ token]= true
   };
 
   Dispatcher.getInstance=function() {"use strict";
-    if( singleton_instance === null ) {
-      singleton_instance= new Dispatcher()
+    if( _singleton_instance === null) {
+      _singleton_instance= new this()
     }
-    return singleton_instance
+    return _singleton_instance
   };
 
+  Dispatcher.enableLogging=function(enabled) {"use strict";
+    _log_dispatches= enabled
+  };
+return Dispatcher;})()
 
-var singleton_instance= null
-
-module.exports= Dispatcher
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./now":187,"./uid":189}],183:[function(require,module,exports){
+},{"./console":181,"./now":188,"./uid":190}],184:[function(require,module,exports){
 var camelize= require( './camelize')
 
 module.exports=
@@ -21089,6 +21163,7 @@ function eventHelperMixin( runtime) {
 
       if( store) {
         eventName= camelize( eventName)
+
         if( hookup= store[ 'on'+ eventName]) {  // jshint ignore:line
           hookup( callback)
 
@@ -21122,14 +21197,15 @@ function eventHelperMixin( runtime) {
   }
 }
 
-},{"./camelize":180}],184:[function(require,module,exports){
+},{"./camelize":180}],185:[function(require,module,exports){
 module.exports=
 function flatten( arrays) {
   var merged= []
+  
   return merged.concat.apply( merged, arrays)
 }
 
-},{}],185:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 (function (process){
 var merge= require( './merge'),
     alias= require( './alias'),
@@ -21137,7 +21213,8 @@ var merge= require( './merge'),
     camelize= require( './camelize'),
     kind= require( 'elucidata-type')
 
-module.exports= (function(){
+module.exports=
+(function(){
 
   function Manager(runtime, name, instance) {"use strict";
     this.runtime= runtime
@@ -21157,17 +21234,14 @@ module.exports= (function(){
     )
 
     alias( this, 'actions', 'action', 'observe', 'observes')
-    alias( this, 'getStore', 'get')
+    alias( this, 'get', 'getStore', 'getClerk')
     alias( this, 'expose', 'exposes', 'outlet', 'outlets')
     alias( this, 'createEvent', 'defineEvent')
     alias( this, 'hasChanged', 'dataDidChange', 'dataHasChanged')
 
-    // alias( this, 'handle', 'handles', 'observe', 'observes')
-    // alias( this, 'expose', 'exposes', 'provide', 'provides')
-
     if( instance.token == null) {  // jshint ignore:line
       instance.token= runtime.dispatcher.register(function( action){
-        var handler;
+        var handler
         if( handler= this.$Manager_handlers[ action.type]) {  // jshint ignore:line
           handler( action)
         }
@@ -21194,7 +21268,13 @@ module.exports= (function(){
   };
 
   Manager.prototype.invoke=function(cmd)  {"use strict";for (var params=[],$__0=1,$__1=arguments.length;$__0<$__1;$__0++) params.push(arguments[$__0]);
-    return this.$Manager_instance[ cmd].apply( this.$Manager_instance, params)
+    var fn= this.$Manager_instance[ cmd]
+    if( kind.isFunction( fn)) {
+      return fn.apply( this.$Manager_instance, params)
+    }
+    else {
+      throw new Error( "Method "+ cmd +" not found!")
+    }
   };
 
   Manager.prototype.notify=function(message) {"use strict";
@@ -21203,14 +21283,13 @@ module.exports= (function(){
   };
 
   Manager.prototype.before=function(methods) {"use strict";
-    var actionDispatchers= {}
-    Object.keys( methods).forEach(function( actionName) {
-      var eventName= this.name +'_'+ actionName,
-          fn= methods[ actionName],
-          boundDispatch= this.dispatch.bind( this, eventName)
+    Object.keys( methods).forEach(function( action_name) {
+      var event_name= this.name +'_'+ action_name,
+          fn= methods[ action_name],
+          bound_dispatch= this.dispatch.bind( this, event_name)
 
-      fn.displayName= eventName
-      this.$Manager_instance[ actionName]= fn.bind( this.$Manager_instance, boundDispatch)
+      fn.displayName= event_name
+      this.$Manager_instance[ action_name]= fn.bind( this.$Manager_instance, bound_dispatch)
     }.bind(this))
     return this
   };
@@ -21224,15 +21303,16 @@ module.exports= (function(){
       store= store.name
     }
 
-    Object.keys( methods).forEach(function( actionName){
-      var eventName= store +'_'+ actionName,
-          fn= methods[ actionName]
-      this.$Manager_handlers[ eventName]= fn //.bind(this._instance)
+    Object.keys( methods).forEach(function( action_name){
+      var event_name= store +'_'+ action_name,
+          fn= methods[ action_name]
 
-      if( store == this.name && !this.$Manager_instance[ actionName]) {
+      this.$Manager_handlers[ event_name]= fn //.bind(this._instance)
+
+      if( store == this.name && !this.$Manager_instance[ action_name]) {
         // Stub out an action...
         var stub= {}
-        stub[ actionName]= function() {
+        stub[ action_name]= function() {
           var args= Array.prototype.slice.call( arguments),
               dispatch= args.shift()
           if( args.length === 1) {
@@ -21267,26 +21347,22 @@ module.exports= (function(){
   };
 
   Manager.prototype.expose=function(methods) {"use strict";
-    Object.keys( methods).forEach(function( methodName){
-      if( this.$Manager_instance.hasOwnProperty( methodName)) {
-        var method= this.$Manager_instance[ methodName]
+    Object.keys( methods).forEach(function( method_name){
+      if( this.$Manager_instance.hasOwnProperty( method_name)) {
+        var method= this.$Manager_instance[ method_name]
 
         if(! method.$Manager_isStub) {
-          var error= new Error( "Redefining property "+ methodName +" on store "+ this.name)
+          var error= new Error( "Redefining property "+ method_name +" on store "+ this.name)
           error.framesToPop= 3
           throw error
         }
       }
-      this.$Manager_instance[ methodName]= methods[ methodName]
+      this.$Manager_instance[ method_name]= methods[ method_name]
     }.bind(this))
     return this
   };
 
-  Manager.prototype.getClerk=function() {"use strict";
-    return this.$Manager_instance
-  };
-
-  Manager.prototype.getStore=function(storeName) {"use strict";
+  Manager.prototype.get=function(storeName) {"use strict";
     if( storeName ) {
       return this.runtime.get( storeName, true )
     }
@@ -21323,7 +21399,7 @@ module.exports= (function(){
 return Manager;})()
 
 }).call(this,require('_process'))
-},{"./alias":178,"./bind-all":179,"./camelize":180,"./merge":186,"_process":14,"elucidata-type":190}],186:[function(require,module,exports){
+},{"./alias":178,"./bind-all":179,"./camelize":180,"./merge":187,"_process":14,"elucidata-type":191}],187:[function(require,module,exports){
 module.exports=
 function merge(/* target, ...sources */) {
   var sources= Array.prototype.slice.call( arguments),
@@ -21340,8 +21416,7 @@ function merge(/* target, ...sources */) {
   return target
 }
 
-},{}],187:[function(require,module,exports){
-
+},{}],188:[function(require,module,exports){
 /* global performance */
 var now= (function(){
   if( typeof performance === 'object' && performance.now ) {
@@ -21359,7 +21434,7 @@ var now= (function(){
 
 module.exports= now
 
-},{}],188:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 (function (process,global){
 var Dispatcher= require( './dispatcher'),
     EventEmitter= require( 'events').EventEmitter,
@@ -21370,16 +21445,15 @@ var Dispatcher= require( './dispatcher'),
     flatten= require( './flatten'),
     uid= require( './uid'),
     alias= require( './alias'),
+    console= require( './console'),  // jshint ignore:line
     bindAll= require( './bind-all'),
     createEvent= require( './create-event'),
     eventHelperMixin= require( './event-helper-mixin')
 
-for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(EventEmitter____Key)){Runtime[EventEmitter____Key]=EventEmitter[EventEmitter____Key];}}var ____SuperProtoOfEventEmitter=EventEmitter===null?null:EventEmitter.prototype;Runtime.prototype=Object.create(____SuperProtoOfEventEmitter);Runtime.prototype.constructor=Runtime;Runtime.__superConstructor__=EventEmitter;
+
 
   function Runtime(settings) {"use strict";
-    EventEmitter.call(this)
-    this.configure( settings)
-
+    this.$Runtime_emitter= new EventEmitter()
     this.$Runtime_registry= {}
     this.$Runtime_managers= {}
     this.$Runtime_builders= []
@@ -21387,6 +21461,8 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
     this.$Runtime_anyChangeEvent= this.createEvent('*', 'any-change')
     this.$Runtime_dataChanges= []
     this.$Runtime_timer= false
+
+    this.configure( settings)
 
     if( this.settings.singletonDispatcher) {
       this.dispatcher= Dispatcher.getInstance()
@@ -21400,10 +21476,6 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
     }
 
     alias( this, 'get', 'getInstance')
-    // DEPRECATED: Remove in a future version...
-    // alias( this, 'define', 'defineStore', 'Store', 'defineClerk', 'Clerk')
-    // alias( this, 'onChange', 'onAnyChange')
-    // alias( this, 'offChange', 'offAnyChange')
   }
 
   Runtime.prototype.configure=function(settings) {"use strict";
@@ -21413,17 +21485,19 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
       freezeInstance: false,
       useRAF: true,
       verbose: false,
+      logging: false,
       singletonDispatcher: false
     }, settings || {})
+    Dispatcher.enableLogging( this.settings.logging)
     return this
   };
 
-  Runtime.prototype.newInstance=function() {"use strict";
-    return new Runtime( this.settings)
+  Runtime.prototype.newInstance=function(settings) {"use strict";
+    return new Runtime( settings || this.settings)
   };
 
   Runtime.prototype.createEvent=function(storeName, eventName) {"use strict";
-    var event= createEvent( storeName, eventName, this)
+    var event= createEvent( storeName, eventName, this.$Runtime_emitter)
 
     if(! this.$Runtime_events[ event.name]) {
       this.$Runtime_events[ event.name]= event
@@ -21448,13 +21522,9 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
     var instance= this.$Runtime_registry[ name]
 
     if( !instance) {
-      if( this.settings.verbose)  {
-        console.warn( "Storefront: Store", name, "is not defined.")
-      }
+      this.$Runtime_warn( "Store", name, "is not defined.")
       if( stubMissing === true) {
-        if( this.settings.verbose)  {
-          console.info( "Building stub for ", name)
-        }
+        this.$Runtime_info( "Building stub for", name)
         instance= { name:name }
         this.$Runtime_registry[ name]= instance
       }
@@ -21510,10 +21580,10 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
   Runtime.prototype.$Runtime_buildFactory=function(name, builder, saveBuilder) {"use strict";
     var instance= this.$Runtime_registry[ name],
         manager= this.$Runtime_managers[ name],
-        returnValue
+        return_value
 
-    if( instance && this.settings.verbose) {
-      console.warn(name, "already defined: Merging definitions.")
+    if( instance) {
+      this.$Runtime_warn( name, "already defined: Merging definitions.")
     }
 
     if(! instance) {
@@ -21527,17 +21597,17 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
     }
 
     if( kind.isFunction( builder)) {
-      returnValue= builder( manager)
+      return_value= builder( manager)
     }
     else if( kind.isObject( builder)) {
-      returnValue= builder
+      return_value= builder
     }
     else {
       throw new Error( "Wrong builder type: Must provide a builder function or object.")
     }
 
-    if( kind.isObject( returnValue)) {
-      manager.expose( returnValue)
+    if( kind.isObject( return_value)) {
+      manager.expose( return_value)
     }
 
     if( this.settings.freezeInstance === true) {
@@ -21552,9 +21622,9 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
   };
 
   Runtime.prototype.$Runtime_trackChangeFor=function(name) {"use strict";
-    var eventName= name +':change'
-    this.on( eventName, function(){
-      this.$Runtime_dataChanges.push({ type:eventName, params:Array.prototype.slice.call(arguments)})
+    var event_name= name +':change'
+    this.$Runtime_emitter.on( event_name, function(){
+      this.$Runtime_dataChanges.push({ type:event_name, params:Array.prototype.slice.call(arguments)})
 
       if(! this.$Runtime_timer) {
         if( this.settings.useRAF && global.requestAnimationFrame) {
@@ -21568,6 +21638,11 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
     }.bind(this))
   };
 
+  Runtime.prototype.$Runtime_stopTrackingChangesFor=function(name) {"use strict";
+    var event_name= name +':change'
+    this.$Runtime_emitter.removeListener( event_name)
+  };
+
   Runtime.prototype.$Runtime_relayDataChanges=function() {"use strict";
     if( this.$Runtime_dataChanges.length) {
       this.$Runtime_anyChangeEvent.emitNow( this.$Runtime_dataChanges)
@@ -21576,33 +21651,43 @@ for(var EventEmitter____Key in EventEmitter){if(EventEmitter.hasOwnProperty(Even
     this.$Runtime_timer= false
   };
 
+  Runtime.prototype.$Runtime_warn=function() {"use strict";
+    if( this.settings.verbose) {
+      console.warn.apply( console, arguments)
+    }
+  };
+  Runtime.prototype.$Runtime_info=function() {"use strict";
+    if( this.settings.verbose) {
+      console.info.apply( console, arguments)
+    }
+  };
 
 
-// Runtime API
+
 module.exports= Runtime
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./alias":178,"./bind-all":179,"./camelize":180,"./create-event":181,"./dispatcher":182,"./event-helper-mixin":183,"./flatten":184,"./manager":185,"./merge":186,"./uid":189,"_process":14,"elucidata-type":190,"events":13}],189:[function(require,module,exports){
-var lastId = 0
+},{"./alias":178,"./bind-all":179,"./camelize":180,"./console":181,"./create-event":182,"./dispatcher":183,"./event-helper-mixin":184,"./flatten":185,"./manager":186,"./merge":187,"./uid":190,"_process":14,"elucidata-type":191,"events":13}],190:[function(require,module,exports){
+var _last_id = 0
 
 function uid ( radix){
   var now = Math.floor( (new Date()).getTime() / 1000 )
   radix= radix || 36
 
-  while ( now <= lastId ) {
+  while ( now <= _last_id ) {
     now += 1
   }
 
-  lastId = now
+  _last_id= now
 
-  return now.toString( radix )
+  return now.toString( radix)
 }
 
 module.exports= uid
 
-},{}],190:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 module.exports=require(15)
-},{"/Users/darthapo/Projects/OpenSource/storefront-example/node_modules/elucidata-type/type.js":15}],191:[function(require,module,exports){
+},{"/Users/darthapo/Projects/OpenSource/storefront-example/node_modules/elucidata-type/type.js":15}],192:[function(require,module,exports){
 (function () {
     'use strict';
 
@@ -21664,7 +21749,7 @@ module.exports=require(15)
     };
 }());
 
-},{"moment":192,"validator":193}],192:[function(require,module,exports){
+},{"moment":193,"validator":194}],193:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -24066,7 +24151,7 @@ module.exports=require(15)
     }
 }).call(this);
 
-},{}],193:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
 /*!
  * Copyright (c) 2014 Chris O'Hara <cohara87@gmail.com>
  *
@@ -24612,7 +24697,7 @@ module.exports=require(15)
 
 });
 
-},{}],194:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 /*
 Author: Geraint Luff and others
 Year: 2013
