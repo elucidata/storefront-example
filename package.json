@@ -7,6 +7,7 @@
     "build": "NODE_ENV=production browserify app/main.jsx -o ./bundle.js --standalone App",
     "watch": "watchify app/main.jsx -o ./bundle.js --standalone App",
     "dev": "npm run build; http-server & npm run watch",
+    "publish": "cp index.html ../storefront-example-pages/ && cp bundle.js ../storefront-example-pages/ && cp styles.css ../storefront-example-pages/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -18,7 +19,7 @@
   "author": "Matt McCray <matt@elucidata.net>",
   "license": "MIT",
   "dependencies": {
-    "storefront": "^0.5.2",
+    "storefront": "^0.6.0",
     "reactify": "^0.17.1",
     "browserify": "^6.3.2",
     "envify": "^3.2.0",
