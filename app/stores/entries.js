@@ -4,29 +4,28 @@ var Storefront= require( 'storefront'),
     Validator= require( '../lib/validator.js')
 
 module.exports=
-Storefront.define( 'Entries', ( mgr)=>{
+Storefront.define( 'Entries', store =>{
+  var isValid= Validator.schemaChecker( store, 'entry'),
+      timer= store.get( 'Timer')
 
-  var {actions, outlets, observes, before}= mgr,
-      isValid= Validator.schemaChecker( mgr, 'entry'),
-      timer= mgr.getStore( 'Timer')
-
+  // Internal state
   var _entries= []
 
-  actions({
+  store.actions({
 
     add( action) {
       if( isValid( action.payload)) {
         _entries.push( action.payload)
-        mgr.dataHasChanged()
+        store.hasChanged()
       }
     }
   })
 
-  observes( timer, {
+  store.observes( timer, {
 
     stop( action) {
       console.log( "Timer stopped, adding entry!")
-      mgr.getClerk().add({
+      store.invoke( 'add', {
         id: uid(),
         created: (new Date()).getTime(),
         projectId: timer.getProjectId(),
@@ -36,7 +35,7 @@ Storefront.define( 'Entries', ( mgr)=>{
     }
   })
 
-  outlets({
+  store.outlets({
 
     allEntries() {
       return _entries

@@ -1,5 +1,5 @@
 module.exports=
-function formatTime( milliseconds) {
+function timecode( milliseconds) {
   var sec_num = Math.floor(milliseconds / 1000),
       hours   = Math.floor(sec_num / 3600),
       minutes = Math.floor((sec_num - (hours * 3600)) / 60),

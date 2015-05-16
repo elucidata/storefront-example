@@ -3,13 +3,13 @@ var Storefront= require( 'storefront'),
     Validator= require( '../lib/validator.js')
 
 module.exports=
-Storefront.define( 'Timer', ( mgr)=>{
-  var {actions, outlets, observes, before}= mgr,
-      isNotEmpty= Validator.emptyObjectChecker( mgr)
+Storefront.define( 'Timer', store => {
+  var isNotEmpty= Validator.emptyObjectChecker( store)
 
+  // State
   var active, currentProject, startedAt, _timer
 
-  actions({
+  store.actions({
 
     start( action) {
       if( isNotEmpty({ projectId:action.payload })) {
@@ -22,12 +22,12 @@ Storefront.define( 'Timer', ( mgr)=>{
     },
 
     stop( action) {
-      mgr.waitFor( 'Entries')
+      store.waitFor( 'Entries')
       stopTracking()
     }
   })
 
-  outlets({
+  store.outlets({
 
     isActive() { return active },
     getProjectId() { return currentProject },
@@ -46,7 +46,7 @@ Storefront.define( 'Timer', ( mgr)=>{
 
   function tick() {
     console.log('timer.tick')
-    mgr.dataHasChanged()
+    store.hasChanged()
     _timer= setTimeout( tick, 1000)
   }
 
@@ -54,7 +54,7 @@ Storefront.define( 'Timer', ( mgr)=>{
     active= true
     currentProject= projectId
     startedAt= (new Date()).getTime()
-    mgr.dataHasChanged()
+    store.hasChanged()
     _timer= setTimeout( tick, 1000)
   }
 
@@ -63,7 +63,7 @@ Storefront.define( 'Timer', ( mgr)=>{
     currentProject= null
     startedAt= null
     if( triggerEvent !== false)
-      mgr.dataHasChanged()
+      store.hasChanged()
     if( _timer) {
       clearTimeout( _timer)
       _timer= null

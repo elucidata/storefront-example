@@ -4,14 +4,14 @@ var Storefront= require( 'storefront'),
     Validator= require( '../lib/validator.js')
 
 module.exports=
-Storefront.define( 'Projects', ( mgr)=>{
-  var {actions, outlets, observes, before, notify}= mgr,
-      isValid= Validator.schemaChecker( mgr, 'project'),
-      isNotEmpty= Validator.emptyObjectChecker( mgr)
+Storefront.define( 'Projects', store =>{
+  var isValid= Validator.schemaChecker( store, 'project'),
+      isNotEmpty= Validator.emptyObjectChecker( store)
 
+  // State
   var _projects= []
 
-  actions({
+  store.actions({
 
     add( action) {
       var name= action.payload
@@ -21,7 +21,7 @@ Storefront.define( 'Projects', ( mgr)=>{
           name: name,
           time: 0
         })
-        mgr.dataHasChanged()
+        store.hasChanged()
       }
     },
 
@@ -34,7 +34,7 @@ Storefront.define( 'Projects', ( mgr)=>{
           }).
           forEach(( _proj)=>{
             _proj.name= project.name
-            mgr.dataHasChanged()
+            store.hasChanged()
           })
       }
     },
@@ -49,12 +49,12 @@ Storefront.define( 'Projects', ( mgr)=>{
           })
       }
       if( len !== _projects.length ) {
-        mgr.dataHasChanged()
+        store.hasChanged()
       }
     }
   })
 
-  outlets({
+  store.outlets({
 
     get( id) {
       return _projects.
@@ -69,7 +69,7 @@ Storefront.define( 'Projects', ( mgr)=>{
 
   })
 
-  observes( 'Entries', {
+  store.observes( 'Entries', {
 
     add( action) {
       _projects.
@@ -78,7 +78,7 @@ Storefront.define( 'Projects', ( mgr)=>{
         }).
         forEach(( project)=>{
           project.time += action.payload.duration
-          mgr.dataHasChanged()
+          store.hasChanged()
         })
     }
   })
