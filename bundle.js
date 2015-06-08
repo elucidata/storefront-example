@@ -103,7 +103,7 @@ module.exports= {
   }
 }
 
-},{"../stores/schema/entry.js":6,"../stores/schema/project.js":7,"elucidata-type":14,"tv4":197,"tv4-formats":194}],3:[function(require,module,exports){
+},{"../stores/schema/entry.js":6,"../stores/schema/project.js":7,"elucidata-type":14,"tv4":199,"tv4-formats":196}],3:[function(require,module,exports){
 var Storefront= require( 'storefront')
 
 Storefront.configure({
@@ -209,7 +209,7 @@ Storefront.define( 'Entries', function(store) {
   })
 })
 
-},{"../lib/validator.js":2,"storefront":176,"storefront/lib/merge":187,"storefront/lib/uid":191}],5:[function(require,module,exports){
+},{"../lib/validator.js":2,"storefront":176,"storefront/lib/merge":188,"storefront/lib/uid":192}],5:[function(require,module,exports){
 var Storefront= require( 'storefront'),
     uid= require( 'storefront/lib/uid'),
     kind= require( 'elucidata-type'),
@@ -297,7 +297,7 @@ Storefront.define( 'Projects', function(store) {
 
 })
 
-},{"../lib/validator.js":2,"elucidata-type":14,"storefront":176,"storefront/lib/uid":191}],6:[function(require,module,exports){
+},{"../lib/validator.js":2,"elucidata-type":14,"storefront":176,"storefront/lib/uid":192}],6:[function(require,module,exports){
 module.exports=
 {
   "$schema": "http://json-schema.org/schema#",
@@ -20582,895 +20582,1263 @@ var Runtime= require( './lib/runtime')
 // module.exports= Runtime.newInstance()
 module.exports= new Runtime()
 
-},{"./lib/runtime":189}],177:[function(require,module,exports){
-module.exports=
-function alias(/* target, prop, ...aliases */) {
-  var aliases= Array.prototype.slice.call( arguments),
-      target= aliases.shift(),
-      prop= aliases.shift(),
-      item= target[ prop]
+},{"./lib/runtime":190}],177:[function(require,module,exports){
+"use strict";
 
-  aliases.forEach(function( alias){
-    target[ alias]= item
-  })
+exports.__esModule = true;
+exports["default"] = alias;
+
+function alias(target, prop) {
+  for (var _len = arguments.length, aliases = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    aliases[_key - 2] = arguments[_key];
+  }
+
+  var item = target[prop];
+
+  aliases.forEach(function (alias) {
+    target[alias] = item;
+  });
 }
 
+module.exports = exports["default"];
 },{}],178:[function(require,module,exports){
-var kind= require( 'elucidata-type')
+'use strict';
 
-module.exports=
-function bindAll(/* target, ...props */) {
-  var props= Array.prototype.slice.call( arguments),
-      target= props.shift()
+exports.__esModule = true;
+exports['default'] = bindAll;
 
-  props.forEach(function( key){
-    var prop= target[ key]
-    if( prop && kind.isFunction( prop)) {
-      target[ key]= prop.bind( target)
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _elucidataType = require('elucidata-type');
+
+var _elucidataType2 = _interopRequireDefault(_elucidataType);
+
+function bindAll(target) {
+  for (var _len = arguments.length, props = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    props[_key - 1] = arguments[_key];
+  }
+
+  props.forEach(function (key) {
+    var prop = target[key];
+
+    if (prop && _elucidataType2['default'].isFunction(prop)) {
+      target[key] = prop.bind(target);
     }
-  })
+  });
 
-  return target
+  return target;
 }
 
-},{"elucidata-type":192}],179:[function(require,module,exports){
-module.exports=
-function camelize( string) {
-  return string.replace( /(?:^|[-_])(\w)/g, function( _, char) {
-    return char ? char.toUpperCase () : ''
-  })
+module.exports = exports['default'];
+},{"elucidata-type":194}],179:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = camelize;
+
+function camelize(string) {
+  return String(string).replace(/(?:^|[-_])(\w)/g, function (_, char) {
+    return char ? char.toUpperCase() : '';
+  });
 }
 
+module.exports = exports['default'];
 },{}],180:[function(require,module,exports){
 (function (global){
 // Based on: https://github.com/paulmillr/console-polyfill/blob/master/index.js
-module.exports=
-(function( con) {
-  var prop, method,
-      empty= {},
-      dummy= function() {},
-      properties= [
-        'memory'
-      ],
-      methods= [
-        'assert',
-        'clear',
-        'count',
-        'debug',
-        'dir',
-        'dirxml',
-        'error',
-        'exception',
-        'group',
-        'groupCollapsed',
-        'groupEnd',
-        'info',
-        'log',
-        'markTimeline',
-        'profile',
-        'profiles',
-        'profileEnd',
-        'show',
-        'table',
-        'time',
-        'timeEnd',
-        'timeline',
-        'timelineEnd',
-        'timeStamp',
-        'trace',
-        'warn'
-      ]
+'use strict';
 
-  while( prop= properties.pop()) {  // jshint ignore:line
-    con[ prop]= con[ prop] || empty
+module.exports = (function (con) {
+  var prop,
+      method,
+      empty = {},
+      dummy = function dummy() {},
+      properties = ['memory'],
+      methods = ['assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'profile', 'profiles', 'profileEnd', 'show', 'table', 'time', 'timeEnd', 'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'];
+
+  while (prop = properties.pop()) {
+    // jshint ignore:line
+    if (!(prop in con)) {
+      con[prop] = con[prop] || empty;
+    }
   }
 
-  while( method= methods.pop()) {  // jshint ignore:line
-    con[ method]= con[ method] || dummy
+  while (method = methods.pop()) {
+    // jshint ignore:line
+    if (!(prop in con)) {
+      con[method] = con[method] || dummy;
+    }
   }
 
-  return con
+  if (!global.console) {
+    global.console = con;
+  }
 
-})( global.console= global.console || {})
-
+  return con;
+})(global.console || {});
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],181:[function(require,module,exports){
 (function (process){
-var camelize= require( './camelize'),
-    flatten= require( './flatten')
+'use strict';
 
-module.exports=
-function createEvent( baseName, eventName, emitter, options) {
-  var event_key= baseName +':'+ eventName
+exports.__esModule = true;
+exports['default'] = createEvent;
 
-  options= options || {}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  var eventApi= {
+var _camelize = require('./camelize');
 
-    name: event_key,
+var _camelize2 = _interopRequireDefault(_camelize);
 
-    public: {},
+var _flatten = require('./flatten');
 
-    emit: function() {
-      var params= Array.prototype.slice.call( arguments)
-      params.unshift( event_key)
-      process.nextTick(function(){
-        emitter.emit.apply( emitter, params)
-      })
+var _flatten2 = _interopRequireDefault(_flatten);
+
+function createEvent(baseName, eventName, emitter) {
+  var options = arguments[3] === undefined ? {} : arguments[3];
+
+  var EVENT_KEY = '' + baseName + ':' + eventName;
+
+  var eventApi = {
+
+    name: EVENT_KEY,
+
+    'public': {},
+
+    emit: function emit() {
+      for (var _len = arguments.length, params = Array(_len), _key = 0; _key < _len; _key++) {
+        params[_key] = arguments[_key];
+      }
+
+      params.unshift(EVENT_KEY);
+      // process.nextTick(() => {
+      //   emitter.emit.apply( emitter, params)
+      // })
+      emitter.emit.apply(emitter, params);
+      return eventApi;
     },
 
-    emitNow: function() {
-      var params= Array.prototype.slice.call( arguments)
-      params.unshift( event_key)
-      emitter.emit.apply( emitter, params)
+    emitNextTick: function emitNextTick() {
+      for (var _len2 = arguments.length, params = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        params[_key2] = arguments[_key2];
+      }
+
+      // CHANGE
+      params.unshift(EVENT_KEY);
+      process.nextTick(function () {
+        emitter.emit.apply(emitter, params);
+      });
+      return eventApi;
     },
 
-    emitFlat: function() {
-      var params= flatten( [ event_key].concat( Array.prototype.slice.call( arguments)))
-      process.nextTick(function(){
-        emitter.emit.apply( emitter, params)
-      })
+    emitNow: function emitNow() {
+      for (var _len3 = arguments.length, params = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        params[_key3] = arguments[_key3];
+      }
+
+      params.unshift(EVENT_KEY);
+      emitter.emit.apply(emitter, params);
+      return eventApi;
+    },
+
+    emitFlat: function emitFlat() {
+      for (var _len4 = arguments.length, params = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        params[_key4] = arguments[_key4];
+      }
+
+      var params = (0, _flatten2['default'])([EVENT_KEY].concat(params));
+      emitter.emit.apply(emitter, params);
+      // process.nextTick(()=>{
+      //   emitter.emit.apply( emitter, params)
+      // })
+      return eventApi;
     }
-  }
+  };
 
-  eventApi.public[ 'on'+ camelize( eventName)]= function( fn) {
-    emitter.on( event_key, fn)
-  }
+  eventApi['public']['on' + (0, _camelize2['default'])(eventName)] = function (fn) {
+    emitter.on(EVENT_KEY, fn);
+    return function unsubscribeToChanges() {
+      emitter.removeListener(EVENT_KEY, fn);
+    };
+  };
 
-  eventApi.public[ 'off'+ camelize( eventName)]= function( fn) {
-    emitter.removeListener( event_key, fn)
-  }
+  eventApi['public']['off' + (0, _camelize2['default'])(eventName)] = function (fn) {
+    emitter.removeListener(EVENT_KEY, fn);
+    return eventApi;
+  };
 
-  return eventApi
+  return eventApi;
 }
 
+module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./camelize":179,"./flatten":185,"_process":13}],182:[function(require,module,exports){
-var uid= require( './uid'),
-    now= require( './now'),
-    console= require( './console')  // jshint ignore:line
+},{"./camelize":179,"./flatten":186,"_process":13}],182:[function(require,module,exports){
+'use strict';
 
-var THRESHOLD= 10, // In milliseconds
-    _singleton_instance= null,
-    _log_dispatches= false
+exports.__esModule = true;
 
-module.exports=
-(function(){
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  function Dispatcher() {"use strict";
-    this.active= false
-    this.$Dispatcher_handlers= {}
-    this.$Dispatcher_processed= {}
-    this.$Dispatcher_tokenList= []
-    this.$Dispatcher_queue= []
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _console = require('./console');
+
+var _console2 = _interopRequireDefault(_console);
+
+var _now = require('./now');
+
+var _now2 = _interopRequireDefault(_now);
+
+var _uid = require('./uid');
+
+var _uid2 = _interopRequireDefault(_uid);
+
+var THRESHOLD = 10; // In milliseconds
+
+var _singletonInstance = null,
+    _logDispatches = false;
+
+var Dispatcher = (function () {
+  function Dispatcher() {
+    _classCallCheck(this, Dispatcher);
+
+    this.active = false;
+    this._handlers = {};
+    this._processed = {};
+    this._tokenList = [];
+    this._queue = [];
   }
 
-  Dispatcher.prototype.register=function(handler, preferredToken) {"use strict";
-    if( preferredToken && this.$Dispatcher_handlers.hasOwnProperty( preferredToken)) {
-      preferredToken= uid()
+  Dispatcher.prototype.register = function register(handler, preferredToken) {
+    if (preferredToken && this._handlers.hasOwnProperty(preferredToken)) {
+      preferredToken = (0, _uid2['default'])();
     }
 
-    var token = preferredToken || uid()
-    this.$Dispatcher_handlers[token]= handler
-    this.$Dispatcher_tokenList= Object.keys( this.$Dispatcher_handlers)
-    return token
+    var token = preferredToken || (0, _uid2['default'])();
+
+    this._handlers[token] = handler;
+    this._tokenList = Object.keys(this._handlers);
+
+    return token;
   };
 
-  Dispatcher.prototype.deregister=function(token) {"use strict";
-    var handler;
-    if( handler= this.$Dispatcher_handlers[ token] )  // jshint ignore:line
-        delete this.$Dispatcher_handlers[ token]
-    return handler
+  Dispatcher.prototype.deregister = function deregister(token) {
+    var handler = this._handlers[token];
+    if (handler) delete this._handlers[token];
+    return handler;
   };
 
-  Dispatcher.prototype.waitFor=function(tokens) {"use strict";
-    if(! this.active) return this
-    (tokens || []).forEach(function( token){
+  Dispatcher.prototype.waitFor = function waitFor(tokens) {
+    var _this = this;
+
+    if (!this.active) return this(tokens || []).forEach(function (token) {
       // support waitFor params being store instances or store tokens:
-      this.$Dispatcher_callHandler( token.token || token)
-    }.bind(this))
-    return this
+      _this._callHandler(token.token || token);
+    });
+    return this;
   };
 
-  Dispatcher.prototype.dispatch=function(action, callback) {"use strict";
-    if( this.active ) {
-      this.$Dispatcher_queue.push([ action, callback])
-      return this
+  Dispatcher.prototype.dispatch = function dispatch(action, callback) {
+    if (this.active) {
+      this._queue.push([action, callback]);
+      return this;
     }
 
-    var length= this.$Dispatcher_tokenList.length,
-        index= 0, start_time, duration, label
+    var length = this._tokenList.length,
+        index = 0,
+        start_time = undefined,
+        duration = undefined,
+        label = undefined;
 
-    if( _log_dispatches) {
-      label= action.type;
-      console.time( label)
-      console.group( label)
+    if (_logDispatches) {
+      label = action.type;
+      _console2['default'].time(label);
+      _console2['default'].group(label);
     }
 
-    if( length ) {
-      start_time= now()
-      this.active= true
-      this.$Dispatcher_currentAction= action
-      this.$Dispatcher_processed= {}
+    if (length) {
+      start_time = (0, _now2['default'])();
+      this.active = true;
+      this._currentAction = action;
+      this._processed = {};
 
-      while( index < length) {
-          this.$Dispatcher_callHandler( this.$Dispatcher_tokenList[ index])
-          index += 1
+      while (index < length) {
+        this._callHandler(this._tokenList[index]);
+        index += 1;
       }
 
-      this.$Dispatcher_currentAction= null
-      this.active= false
+      this._currentAction = null;
+      this.active = false;
 
-      duration= now() - start_time
+      duration = (0, _now2['default'])() - start_time;
 
-      if( duration > THRESHOLD) {
-        console.info( 'Dispatch of', action.type ,'took >', THRESHOLD, 'ms') // jshint ignore:line
-        // global[ 'console'].info( 'Dispatch of', action.type ,'took >', THRESHOLD, 'ms') // jshint ignore:line
+      if (_logDispatches && duration > THRESHOLD) {
+        _console2['default'].info('Dispatch of', action.type, 'took >', THRESHOLD, 'ms');
       }
-
     }
 
-    if( _log_dispatches) {
-      console.groupEnd( label)
-      console.timeEnd( label)
+    if (_logDispatches) {
+      _console2['default'].groupEnd(label);
+      _console2['default'].timeEnd(label);
     }
 
-    if( callback) {
-      callback() // Should the callback be sent anything?
+    if (callback) {
+      callback();
     }
 
-    if( this.$Dispatcher_queue.length) {
+    if (this._queue.length) {
       // Should this happen on the nextTick?
-      var $__0=  this.$Dispatcher_queue.shift(),nextAction=$__0[0],nextCallback=$__0[1]
-      this.dispatch( nextAction, nextCallback)
+
+      var _queue$shift = this._queue.shift();
+
+      var nextAction = _queue$shift[0];
+      var nextCallback = _queue$shift[1];
+
+      this.dispatch(nextAction, nextCallback);
     }
 
-    return this
+    return this;
   };
 
-  Dispatcher.prototype.$Dispatcher_callHandler=function(token) {"use strict";
-    if( this.$Dispatcher_processed[ token] === true || !this.active) return
-    var handler= this.$Dispatcher_handlers[ token]
+  Dispatcher.prototype._callHandler = function _callHandler(token) {
+    if (this._processed[token] === true || !this.active) return;
+    var handler = this._handlers[token];
 
-    handler.call( this, this.$Dispatcher_currentAction, this, token)
-    this.$Dispatcher_processed[ token]= true
+    handler.call(this, this._currentAction, this, token);
+    this._processed[token] = true;
   };
 
-  Dispatcher.getInstance=function() {"use strict";
-    if( _singleton_instance === null) {
-      _singleton_instance= new this()
+  Dispatcher.getInstance = function getInstance() {
+    if (_singletonInstance === null) {
+      _singletonInstance = new this();
     }
-    return _singleton_instance
+    return _singletonInstance;
   };
 
-  Dispatcher.enableLogging=function(enabled) {"use strict";
-    _log_dispatches= enabled
+  Dispatcher.enableLogging = function enableLogging(enabled) {
+    _logDispatches = enabled;
   };
-return Dispatcher;})()
 
-},{"./console":180,"./now":188,"./uid":191}],183:[function(require,module,exports){
-var camelize= require( './camelize'),
-    subscriptions= require( './subscriptions')
+  return Dispatcher;
+})();
 
-module.exports=
-function eventHelperMixin( runtime) {
-  var _subscriber= subscriptions( runtime)
+exports['default'] = Dispatcher;
+module.exports = exports['default'];
+// jshint ignore:line
+// global[ 'console'].info( 'Dispatch of', action.type ,'took >', THRESHOLD, 'ms') // jshint ignore:line
+// Should the callback be sent anything?
+},{"./console":180,"./now":189,"./uid":192}],183:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = ensure;
+
+function ensure(condition, format, a, b, c, d, e, f) {
+  if (!condition) {
+    var error, args, args_index;
+
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      args = [a, b, c, d, e, f];
+      args_index = 0;
+
+      error = new Error('Violation: ' + format.replace(/%s/g, function () {
+        return args[args_index++];
+      }));
+    }
+
+    error.framesToPop = 1; // we don't care about ensure's own frame
+    throw error;
+  }
+}
+
+// module.exports= ensure
+
+module.exports = exports['default'];
+},{}],184:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = eventHelperMixin;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _camelize = require('./camelize');
+
+var _camelize2 = _interopRequireDefault(_camelize);
+
+var _subscriptions = require('./subscriptions');
+
+var _subscriptions2 = _interopRequireDefault(_subscriptions);
+
+function eventHelperMixin(runtime) {
+  var _subscriber = (0, _subscriptions2['default'])(runtime);
 
   return {
-    onStoreEvent:function( storeName, eventName, callback) {
-      if(! this._storefront_subscriptions) {
-        this._storefront_subscriptions= _subscriber()
+
+    onStoreEvent: function onStoreEvent(storeName, eventName, callback) {
+      if (!this._storefrontSubscriptions) {
+        this._storefrontSubscriptions = _subscriber();
       }
-      this._storefront_subscriptions.on( storeName, eventName, callback)
+      this._storefrontSubscriptions.on(storeName, eventName, callback);
     },
-    componentWillUnmount:function() {
-      if( this._storefront_subscriptions) {
-        this._storefront_subscriptions.release()
-        this._storefront_subscriptions= null
+
+    componentWillUnmount: function componentWillUnmount() {
+      if (this._storefrontSubscriptions) {
+        this._storefrontSubscriptions.release();
+        this._storefrontSubscriptions = null;
+      }
+    }
+
+  };
+}
+
+module.exports = exports['default'];
+},{"./camelize":179,"./subscriptions":191}],185:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports['default'] = extractMethods;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _elucidataType = require('elucidata-type');
+
+var _elucidataType2 = _interopRequireDefault(_elucidataType);
+
+function extractMethods(source, allowNonMethods) {
+  var results = {};
+
+  if (_elucidataType2['default'].isFunction(source)) {
+    source = getInlineMethods(source);
+  }
+
+  for (var _name in source) {
+    var prop = source[_name];
+
+    if (allowNonMethods === true) {
+      results[_name] = prop;
+    } else {
+
+      if (_elucidataType2['default'].isFunction(prop)) {
+        results[_name] = prop;
       }
     }
   }
+
+  return results;
 }
 
-},{"./camelize":179,"./subscriptions":190}],184:[function(require,module,exports){
-var kind= require( 'elucidata-type')
+function getInlineMethods(source) {
 
-module.exports=
-function extractMethods( source) {
-  var results= {}
-  if( kind.isFunction( source )) {
-    source= getInlineMethods( source)
-  }
-  for( var name in source) {
-    var prop= source[ name]
-    if( kind.isFunction( prop)) {
-      results[ name]= prop
-    }
-  }
-  return results
-}
-
-
-function getInlineMethods( source ) {
-  if(!('getOwnPropertyNames' in Object)) { // Probably mobile?
+  if (!('getOwnPropertyNames' in Object)) {
+    // Probably mobile?
     return source.prototype // this should work, needs more testing
+    ;
   }
-  var instance= new source(), methods= {}
-  Object.getOwnPropertyNames( source.prototype).forEach(function( name)  {
-    if( name !== 'constructor') {
-      methods[ name]= source.prototype[ name]
+
+  var instance = new source(),
+      methods = {};
+
+  Object.getOwnPropertyNames(source.prototype).forEach(function (name) {
+    if (name !== 'constructor') {
+      methods[name] = source.prototype[name];
     }
-  })
-  return methods
+  });
+
+  return methods;
+}
+module.exports = exports['default'];
+},{"elucidata-type":194}],186:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+exports["default"] = flatten;
+
+function flatten(arrays) {
+  var merged = [];
+
+  return merged.concat.apply(merged, arrays);
 }
 
-},{"elucidata-type":192}],185:[function(require,module,exports){
-module.exports=
-function flatten( arrays) {
-  var merged= []
-  
-  return merged.concat.apply( merged, arrays)
-}
-
-},{}],186:[function(require,module,exports){
+module.exports = exports["default"];
+},{}],187:[function(require,module,exports){
 (function (process){
-var merge= require( './merge'),
-    alias= require( './alias'),
-    bindAll= require( './bind-all'),
-    camelize= require( './camelize'),
-    extractMethods= require( './extract-methods'),
-    kind= require( 'elucidata-type')
+'use strict';
 
-module.exports=
-(function(){
+exports.__esModule = true;
 
-  function Manager(runtime, name, instance) {"use strict";
-    this.runtime= runtime
-    this.name= name
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-    this.$Manager_instance= instance
-    this.$Manager_handlers= {}
-    this.$Manager_notifyEvent= runtime.createEvent( name, 'notify')
-    this.$Manager_changeEvent= runtime.createEvent( name, 'change')
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-    this.expose( this.$Manager_notifyEvent.public)
-    this.expose( this.$Manager_changeEvent.public)
+var _elucidataType = require('elucidata-type');
 
-    bindAll( this,
-      'dispatch', 'notify', 'actions', 'waitFor', 'hasChanged', 'before',
-      'expose', 'get', 'before', 'createEvent', 'invoke'
-    )
+var _elucidataType2 = _interopRequireDefault(_elucidataType);
 
-    alias( this, 'actions', 'action', 'observe', 'observes')
-    alias( this, 'get', 'getStore', 'getClerk')
-    alias( this, 'expose', 'exposes', 'outlet', 'outlets')
-    alias( this, 'createEvent', 'defineEvent')
-    alias( this, 'hasChanged', 'dataDidChange', 'dataHasChanged')
-    alias( this, 'onChange', 'listen')
-    alias( this, 'offChange', 'unlisten')
+var _alias = require('./alias');
 
-    if( instance.token == null) {  // jshint ignore:line
-      instance.token= runtime.dispatcher.register(function( action){
-        var handler
-        if( handler= this.$Manager_handlers[ action.type]) {  // jshint ignore:line
-          handler( action)
+var _alias2 = _interopRequireDefault(_alias);
+
+var _bindAll = require('./bind-all');
+
+var _bindAll2 = _interopRequireDefault(_bindAll);
+
+var _camelize = require('./camelize');
+
+var _camelize2 = _interopRequireDefault(_camelize);
+
+var _extractMethods = require('./extract-methods');
+
+var _extractMethods2 = _interopRequireDefault(_extractMethods);
+
+var _merge = require('./merge');
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var Manager = (function () {
+  function Manager(runtime, name, instance) {
+    var _this = this;
+
+    _classCallCheck(this, Manager);
+
+    this.runtime = runtime;
+    this.name = name;
+
+    this._instance = instance;
+    this._handlers = {};
+    this._notifyEvent = runtime.createEvent(name, 'notify');
+    this._changeEvent = runtime.createEvent(name, 'change');
+
+    this.expose(this._notifyEvent['public']);
+    this.expose(this._changeEvent['public']);
+    this.expose({
+      listen: this._changeEvent['public'].onChange,
+      unlisten: this._changeEvent['public'].offChange
+    });
+
+    (0, _bindAll2['default'])(this, 'dispatch', 'notify', 'actions', 'waitFor', 'hasChanged', 'before', 'expose', 'get', 'before', 'createEvent', 'invoke');
+
+    (0, _alias2['default'])(this, 'actions', 'action', 'observe', 'observes');
+    (0, _alias2['default'])(this, 'get', 'getStore', 'getClerk');
+    (0, _alias2['default'])(this, 'expose', 'exposes', 'outlet', 'outlets');
+    (0, _alias2['default'])(this, 'createEvent', 'defineEvent');
+    (0, _alias2['default'])(this, 'hasChanged', 'dataDidChange', 'dataHasChanged');
+
+    if (instance.token == null) {
+      // jshint ignore:line
+      instance.token = runtime.dispatcher.register(function (action) {
+        var handler = _this._handlers[action.type];
+        if (handler) {
+          handler(action);
         }
-      }.bind(this))
+      });
     }
   }
 
-  Manager.prototype.dispatch=function(type, payload, callback) {"use strict";
-    if( this.runtime.settings.aysncDispatch) {
-      process.nextTick(function(){
-        this.runtime.dispatcher.dispatch(
-          { origin: this.name, type:type, payload:payload },
-          callback
-        )
-      }.bind(this))
+  Manager.prototype.dispatch = function dispatch(type, payload, callback) {
+    var _this2 = this;
+
+    var doDispatch = function doDispatch() {
+      _this2.runtime.dispatcher.dispatch({ origin: _this2.name, type: type, payload: payload }, callback);
+    };
+
+    if (this.runtime.settings.aysncDispatch) {
+      process.nextTick(doDispatch);
+    } else {
+      doDispatch();
     }
-    else {
-      this.runtime.dispatcher.dispatch(
-        { origin: this.name, type:type, payload:payload },
-        callback
-      )
-    }
-    return this
+
+    return this;
   };
 
-  Manager.prototype.invoke=function(cmd)  {"use strict";for (var params=[],$__0=1,$__1=arguments.length;$__0<$__1;$__0++) params.push(arguments[$__0]);
-    var fn= this.$Manager_instance[ cmd]
-    if( kind.isFunction( fn)) {
-      return fn.apply( this.$Manager_instance, params)
+  Manager.prototype.invoke = function invoke(cmd) {
+    for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      params[_key - 1] = arguments[_key];
     }
-    else {
-      throw new Error( "Method "+ cmd +" not found!")
+
+    var fn = this._instance[cmd];
+
+    if (_elucidataType2['default'].isFunction(fn)) {
+      return fn.apply(this._instance, params);
+    } else if (cmd.indexOf('.')) {
+      var _cmd$split = cmd.split('.');
+
+      var _storeName = _cmd$split[0];
+      var fnName = _cmd$split[1];
+      var store = this.runtime.get(_storeName);
+      if (store) {
+        store.invoke.apply(store, [fnName].concat(params));
+      } else {
+        throw new Error('Store ' + _storeName + ' not found for invocation: \'' + cmd + '\'!');
+      }
+    } else {
+      throw new Error('Method ' + cmd + ' not found!');
     }
   };
 
-  Manager.prototype.notify=function(message) {"use strict";
-    this.$Manager_notifyEvent.emitNow( message)
-    return this
+  Manager.prototype.notify = function notify(message) {
+    this._notifyEvent.emitNow(message);
+    return this;
   };
 
-  Manager.prototype.before=function(methods) {"use strict";
-    methods= extractMethods( methods)
-    Object.keys( methods).forEach(function( action_name) {
-      var event_name= this.name +'_'+ action_name,
-          fn= methods[ action_name],
-          bound_dispatch= this.dispatch.bind( this, event_name)
+  Manager.prototype.before = function before(methods) {
+    var _this3 = this;
 
-      fn.displayName= event_name
-      this.$Manager_instance[ action_name]= fn.bind( this.$Manager_instance, bound_dispatch)
-    }.bind(this))
-    return this
+    methods = (0, _extractMethods2['default'])(methods);
+
+    Object.keys(methods).forEach(function (actionName) {
+      var eventName = '' + _this3.name + '_' + actionName,
+          fn = methods[actionName],
+          boundDispatch = _this3.dispatch.bind(_this3, eventName);
+
+      fn.displayName = eventName;
+      _this3._instance[actionName] = fn.bind(_this3._instance, boundDispatch);
+    });
+
+    return this;
   };
 
-  Manager.prototype.actions=function(store, methods) {"use strict";
-    if( arguments.length === 1) {
-      methods= store
-      store= this.name
-    }
-    else if( kind.isObject( store)) {
-      store= store.name
-    }
-    methods= extractMethods( methods)
-    Object.keys( methods).forEach(function( action_name){
-      var event_name= store +'_'+ action_name,
-          fn= methods[ action_name]
+  Manager.prototype.actions = function actions(store, methods) {
+    var _this4 = this;
 
-      this.$Manager_handlers[ event_name]= fn //.bind(this._instance)
+    if (arguments.length === 1) {
+      methods = store;
+      store = this.name;
+    } else if (_elucidataType2['default'].isObject(store)) {
+      store = store.name;
+    }
 
-      if( store == this.name && !this.$Manager_instance[ action_name]) {
+    if (_elucidataType2['default'].isNotString(store)) {
+      throw new Error('Unknown store type: ' + (0, _elucidataType2['default'])(store));
+    }
+
+    methods = (0, _extractMethods2['default'])(methods);
+
+    Object.keys(methods).forEach(function (actionName) {
+      var eventName = '' + store + '_' + actionName,
+          fn = methods[actionName];
+
+      _this4._handlers[eventName] = fn.bind(_this4._instance); // Change?!
+
+      if (store == _this4.name && !_this4._instance[actionName]) {
         // Stub out an action...
-        var stub= {}
-        stub[ action_name]= function() {
-          var args= Array.prototype.slice.call( arguments),
-              dispatch= args.shift()
-          if( args.length === 1) {
-            dispatch( args[ 0])
+        var stub = {};
+
+        stub[actionName] = function (dispatch) {
+          for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+            args[_key2 - 1] = arguments[_key2];
           }
-          else {
-            dispatch( args)
+
+          if (args.length === 1) {
+            dispatch(args[0]);
+          } else {
+            dispatch(args);
           }
-        }
-        this.before( stub)
+        };
+
+        stub[actionName]._isStub = true;
+
+        _this4.before(stub);
       }
-    }.bind(this))
-    return this
+    });
+
+    return this;
   };
 
-  Manager.prototype.waitFor=function()  {"use strict";for (var stores=[],$__0=0,$__1=arguments.length;$__0<$__1;$__0++) stores.push(arguments[$__0]);
-    stores= stores.map(function( store) {
-      if( kind.isString( store)) {
-        return this.runtime.get( store)
-      }
-      else {
-        return store
-      }
-    }.bind(this))
-    this.runtime.dispatcher.waitFor( stores)
-    return this
-  };
+  Manager.prototype.waitFor = function waitFor() {
+    var _this5 = this;
 
-  Manager.prototype.hasChanged=function() {"use strict";
-    this.$Manager_changeEvent.emitFlat( arguments)
-    return this
-  };
-
-  Manager.prototype.expose=function(methods) {"use strict";
-    methods= extractMethods( methods)
-    Object.keys( methods).forEach(function( method_name){
-      if( this.$Manager_instance.hasOwnProperty( method_name)) {
-        var method= this.$Manager_instance[ method_name]
-
-        if(! method.$Manager_isStub) {
-          var error= new Error( "Redefining property "+ method_name +" on store "+ this.name)
-          error.framesToPop= 3
-          throw error
-        }
-      }
-      this.$Manager_instance[ method_name]= methods[ method_name]
-    }.bind(this))
-    return this
-  };
-
-  Manager.prototype.get=function(storeName) {"use strict";
-    if( storeName ) {
-      return this.runtime.get( storeName, true )
+    for (var _len3 = arguments.length, stores = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      stores[_key3] = arguments[_key3];
     }
-    else {
-      return this.$Manager_instance
+
+    stores = stores.map(function (store) {
+      if (_elucidataType2['default'].isString(store)) {
+        return _this5.runtime.get(store);
+      } else {
+        return store;
+      }
+    });
+
+    this.runtime.dispatcher.waitFor(stores);
+
+    return this;
+  };
+
+  Manager.prototype.hasChanged = function hasChanged() {
+    for (var _len4 = arguments.length, keys = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      keys[_key4] = arguments[_key4];
+    }
+
+    this._changeEvent.emit(keys);
+    return this;
+  };
+
+  Manager.prototype.expose = function expose(methods) {
+    var _this6 = this;
+
+    var allowNonMethods = arguments[1] === undefined ? false : arguments[1];
+
+    methods = (0, _extractMethods2['default'])(methods, allowNonMethods);
+
+    Object.keys(methods).forEach(function (methodName) {
+      if (_this6._instance.hasOwnProperty(methodName)) {
+        var error = new Error('Redefinition of \'' + methodName + '\' in store \'' + storeName + '\' not allowed.');
+        error.framesToPop = 3;
+        throw error
+        // let method= this._instance[ methodName ]
+
+        // if(! method._isStub ) {
+        //   let error= new Error( `Redefinition of '${ methodName }' in store ${ storeName } not allowed.` )
+        //   error.framesToPop= 3
+        //   throw error
+        // }
+        // else {
+        //   console.log( "Method is a stub, go ahead.", methodName)
+        // }
+        ;
+      }
+
+      _this6._instance[methodName] = methods[methodName];
+    });
+
+    return this;
+  };
+
+  Manager.prototype.get = function get(storeName) {
+    if (storeName) {
+      return this.runtime.get(storeName, true);
+    } else {
+      return this._instance;
     }
   };
 
-  Manager.prototype.createEvent=function(eventName, options) {"use strict";
-    options= options || {}
-    var event= this.runtime.createEvent( name, eventName, options),
-        emitterFn= options.async ? event.emit.bind( event) : event.emitNow.bindNow( event)
+  Manager.prototype.createEvent = function createEvent(eventName) {
+    var options = arguments[1] === undefined ? {} : arguments[1];
 
-    this.expose( event.public)
-    this.$Manager_instance[ 'emit'+ camelize( eventName)]= emitterFn
+    var event = this.runtime.createEvent(name, eventName, options),
+        emitterFn = options.async ? event.emitNextTick.bind(event) : event.emit.bind(event);
 
-    return emitterFn
+    this.expose(event['public']);
+    this._instance['emit' + (0, _camelize2['default'])(eventName)] = emitterFn;
+
+    return emitterFn;
   };
 
   // You shouldn't call this yourself... The runtime will if a resetStore call
   // is made -- usually only in testing!
-  Manager.prototype.resetInternals=function() {"use strict";
-    this.$Manager_handlers= {}
 
-    if( this.$Manager_instance.token) {
-      this.runtime.dispatcher.deregister( this.$Manager_instance.token)
+  Manager.prototype.resetInternals = function resetInternals() {
+    var _this7 = this;
+
+    this._handlers = {};
+
+    if (this._instance.token) {
+      this.runtime.dispatcher.deregister(this._instance.token);
     }
 
-    Object.keys( this.$Manager_instance).forEach(function( key){
-      if( key !== 'name') {
-        delete this.$Manager_instance[ key]
+    Object.keys(this._instance).forEach(function (key) {
+      if (key !== 'name') {
+        delete _this7._instance[key];
       }
-    }.bind(this))
+    });
   };
-return Manager;})()
 
+  return Manager;
+})();
+
+exports['default'] = Manager;
+module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./alias":177,"./bind-all":178,"./camelize":179,"./extract-methods":184,"./merge":187,"_process":13,"elucidata-type":192}],187:[function(require,module,exports){
-module.exports=
-function merge(/* target, ...sources */) {
-  var sources= Array.prototype.slice.call( arguments),
-      target= sources.shift()
+},{"./alias":177,"./bind-all":178,"./camelize":179,"./extract-methods":185,"./merge":188,"_process":13,"elucidata-type":194}],188:[function(require,module,exports){
+"use strict";
 
-  sources.forEach(function( source){
-    Object.
-      keys( source).
-      forEach(function( key){
-        target[ key]= source[ key]
-      })
-  })
+exports.__esModule = true;
+exports["default"] = merge;
 
-  return target
+function merge(target) {
+  for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    sources[_key - 1] = arguments[_key];
+  }
+
+  sources.forEach(function (source) {
+    Object.keys(source).forEach(function (key) {
+      target[key] = source[key];
+    });
+  });
+
+  return target;
 }
 
-},{}],188:[function(require,module,exports){
-/* global performance */
-var now= (function(){
-  if( typeof performance === 'object' && performance.now ) {
-    return performance.now.bind( performance )
-  }
-  else if( Date.now ) {
-    return Date.now.bind(Date)
-  }
-  else {
-    return function() {
-      return (new Date()).getTime()
-    }
-  }
-})()
-
-module.exports= now
-
+module.exports = exports["default"];
 },{}],189:[function(require,module,exports){
+/* global performance */
+'use strict';
+
+exports.__esModule = true;
+var now = (function () {
+  if (typeof performance === 'object' && performance.now) {
+    return performance.now.bind(performance);
+  } else if (Date.now) {
+    return Date.now.bind(Date);
+  } else {
+    return function () {
+      return new Date().getTime();
+    };
+  }
+})();
+
+exports['default'] = now;
+module.exports = exports['default'];
+},{}],190:[function(require,module,exports){
 (function (process,global){
-var Dispatcher= require( './dispatcher'),
-    // EventEmitter= require( 'events').EventEmitter,
-    EventEmitter= require('eventemitter3'),
-    Manager= require( './manager'),
-    kind= require( 'elucidata-type'),
-    camelize= require( './camelize'),
-    merge= require( './merge'),
-    flatten= require( './flatten'),
-    uid= require( './uid'),
-    alias= require( './alias'),
-    console= require( './console'),  // jshint ignore:line
-    bindAll= require( './bind-all'),
-    createEvent= require( './create-event'),
-    eventHelperMixin= require( './event-helper-mixin'),
-    subscriptions= require( './subscriptions')
+'use strict';
 
+exports.__esModule = true;
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  function Runtime(settings) {"use strict";
-    this.$Runtime_emitter= new EventEmitter()
-    this.$Runtime_emitter.setMaxListeners( 0) // Unlimited event listeners! ? !
-    this.$Runtime_registry= {}
-    this.$Runtime_managers= {}
-    this.$Runtime_builders= []
-    this.$Runtime_events= {}
-    this.$Runtime_anyChangeEvent= this.createEvent('*', 'any-change')
-    this.$Runtime_dataChanges= []
-    this.$Runtime_timer= false
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-    this.configure( settings)
+var _dispatcher = require('./dispatcher');
 
-    if( this.settings.singletonDispatcher) {
-      this.dispatcher= Dispatcher.getInstance()
+var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+var _eventemitter3 = require('eventemitter3');
+
+var _eventemitter32 = _interopRequireDefault(_eventemitter3);
+
+var _manager = require('./manager');
+
+var _manager2 = _interopRequireDefault(_manager);
+
+var _alias = require('./alias');
+
+var _alias2 = _interopRequireDefault(_alias);
+
+var _bindAll = require('./bind-all');
+
+var _bindAll2 = _interopRequireDefault(_bindAll);
+
+var _camelize = require('./camelize');
+
+var _camelize2 = _interopRequireDefault(_camelize);
+
+var _console = require('./console');
+
+var _console2 = _interopRequireDefault(_console);
+
+var _createEvent2 = require('./create-event');
+
+var _createEvent3 = _interopRequireDefault(_createEvent2);
+
+var _ensure = require('./ensure');
+
+var _ensure2 = _interopRequireDefault(_ensure);
+
+var _eventHelperMixin = require('./event-helper-mixin');
+
+var _eventHelperMixin2 = _interopRequireDefault(_eventHelperMixin);
+
+var _flatten = require('./flatten');
+
+var _flatten2 = _interopRequireDefault(_flatten);
+
+var _elucidataType = require('elucidata-type');
+
+var _elucidataType2 = _interopRequireDefault(_elucidataType);
+
+var _merge = require('./merge');
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _now = require('./now');
+
+var _now2 = _interopRequireDefault(_now);
+
+var _subscriptions = require('./subscriptions');
+
+var _subscriptions2 = _interopRequireDefault(_subscriptions);
+
+var _uid = require('./uid');
+
+var _uid2 = _interopRequireDefault(_uid);
+
+var _version = require('./version');
+
+var _version2 = _interopRequireDefault(_version);
+
+var DEFAULTS = {
+  asyncDispatch: true,
+  freezeInstance: false,
+  useRAF: true,
+  verbose: false,
+  logging: false,
+  singletonDispatcher: false
+};
+
+var Runtime = (function () {
+  function Runtime(settings) {
+    _classCallCheck(this, Runtime);
+
+    this._emitter = new _eventemitter32['default']();
+    this._registry = {};
+    this._managers = {};
+    this._builders = [];
+    this._events = {};
+    this._anyChangeEvent = this.createEvent('*', 'any-change');
+    this._dataChanges = [];
+    this._timer = false;
+    this.version = _version2['default'];
+
+    this.configure(settings);
+
+    if (this.settings.singletonDispatcher) {
+      this.dispatcher = _dispatcher2['default'].getInstance();
+    } else {
+      this.dispatcher = new _dispatcher2['default']();
     }
-    else {
-      this.dispatcher= new Dispatcher()
-    }
 
-    this.mixins={
-      eventHelper: eventHelperMixin( this),
-      subscriptions: subscriptions( this)
-    }
+    this.util = {
+      alias: _alias2['default'],
+      bindAll: _bindAll2['default'],
+      camelize: _camelize2['default'],
+      ensure: _ensure2['default'],
+      eventHelperMixin: (0, _eventHelperMixin2['default'])(this),
+      flatten: _flatten2['default'],
+      kind: _elucidataType2['default'],
+      merge: _merge2['default'],
+      now: _now2['default'],
+      subscriptions: (0, _subscriptions2['default'])(this),
+      uid: _uid2['default'] };
 
-    alias( this, 'get', 'getInstance')
+    // DEPRECATED:
+    this.mixins = {
+      eventHelper: (0, _eventHelperMixin2['default'])(this),
+      subscriptions: (0, _subscriptions2['default'])(this)
+    };
+
+    (0, _alias2['default'])(this, 'get', 'getInstance');
   }
 
-  Runtime.prototype.configure=function(settings) {"use strict";
+  Runtime.prototype.configure = function configure() {
+    var settings = arguments[0] === undefined ? {} : arguments[0];
+
     // Default config settings
-    this.settings= merge({
-      asyncDispatch: true,
-      freezeInstance: false,
-      useRAF: true,
-      verbose: false,
-      logging: false,
-      singletonDispatcher: false
-    }, settings || {})
-    Dispatcher.enableLogging( this.settings.logging)
-    return this
+    this.settings = (0, _merge2['default'])({}, DEFAULTS, settings);
+
+    _dispatcher2['default'].enableLogging(this.settings.logging);
+
+    return this;
   };
 
-  Runtime.prototype.newInstance=function(settings) {"use strict";
-    return new Runtime( settings || this.settings)
+  Runtime.prototype.newInstance = function newInstance(settings) {
+    return new Runtime(settings || this.settings);
   };
 
-  Runtime.prototype.createEvent=function(storeName, eventName, options) {"use strict";
-    var event= createEvent( storeName, eventName, this.$Runtime_emitter, options)
+  Runtime.prototype.createEvent = function createEvent(storeName, eventName, options) {
+    var event = (0, _createEvent3['default'])(storeName, eventName, this._emitter, options);
 
-    if(! this.$Runtime_events[ event.name]) {
-      this.$Runtime_events[ event.name]= event
+    if (!this._events[event.name]) {
+      this._events[event.name] = event;
     }
 
-    return this.$Runtime_events[ event.name]
+    return this._events[event.name];
   };
 
-  Runtime.prototype.knownEvents=function() {"use strict";
-    return Object.keys( this.$Runtime_events)
+  Runtime.prototype.knownEvents = function knownEvents() {
+    return Object.keys(this._events);
   };
 
-  Runtime.prototype.define=function(name, builder) {"use strict";
-    if( kind.isUndefined( builder) ) { //arguments.length === 1) {
-      builder= name
-      name= uid()
+  Runtime.prototype.define = function define(name, builder) {
+    if (_elucidataType2['default'].isUndefined(builder)) {
+      builder = name;
+      name = (0, _uid2['default'])();
     }
-    return this.$Runtime_buildFactory( name, builder)
+    return this._buildFactory(name, builder);
   };
 
-  Runtime.prototype.get=function(name, stubMissing) {"use strict";
-    var instance= this.$Runtime_registry[ name]
+  Runtime.prototype.get = function get(name, stubMissing) {
+    var instance = this._registry[name];
 
-    if( !instance) {
-      this.$Runtime_warn( "Storefront: Store", name, "is not defined.")
-      if( stubMissing === true) {
-        this.$Runtime_info( "Storefront: Building stub for", name)
-        instance= { name:name }
-        this.$Runtime_registry[ name]= instance
+    if (!instance) {
+      this._warn('Storefront: Store', name, 'is not defined.');
+      if (stubMissing === true) {
+        this._info('Storefront: Building stub for', name);
+        instance = { name: name };
+        this._registry[name] = instance;
       }
     }
 
-    return instance
+    return instance;
   };
 
-  Runtime.prototype.getManager=function(name) {"use strict";
-    return this.$Runtime_managers[ name]
+  Runtime.prototype.getManager = function getManager(name) {
+    return this._managers[name];
   };
 
-  Runtime.prototype.hasStore=function(name) {"use strict";
-    return this.$Runtime_registry.hasOwnProperty( name)
+  Runtime.prototype.hasStore = function hasStore(name) {
+    return this._registry.hasOwnProperty(name);
   };
 
-  Runtime.prototype.onChange=function(fn) {"use strict";
-    this.$Runtime_anyChangeEvent.public.onAnyChange( fn)
-    return this
+  Runtime.prototype.onChange = function onChange(fn) {
+    var _this = this;
+
+    this._anyChangeEvent['public'].onAnyChange(fn);
+    return function () {
+      _this._anyChangeEvent.publish.offAnyChange(fn);
+    };
   };
 
-  Runtime.prototype.offChange=function(fn) {"use strict";
-    this.$Runtime_anyChangeEvent.public.offAnyChange( fn)
-    return this
+  Runtime.prototype.offChange = function offChange(fn) {
+    this._anyChangeEvent['public'].offAnyChange(fn);
+    return this;
   };
 
-  Runtime.prototype.size=function() {"use strict";
-    return this.storeNames().length
+  Runtime.prototype.size = function size() {
+    return this.storeNames().length;
   };
 
-  Runtime.prototype.storeNames=function() {"use strict";
-    return Object.keys( this.$Runtime_registry)
+  Runtime.prototype.storeNames = function storeNames() {
+    return Object.keys(this._registry);
   };
 
-  Runtime.prototype.recreateStore=function(name) {"use strict";
-    var manager= this.getManager( name)
+  Runtime.prototype.allStores = function allStores() {
+    var _this2 = this;
 
-    if( manager) {
-      manager.resetInternals()
-    }
+    var all = {};
 
-    this.$Runtime_builders
-      .filter(function( def){
-        return def.name === name
-      })
-      .forEach(function( info){
-        this.$Runtime_buildFactory( info.name, info.builder, false)
-      }.bind(this))
+    Object.keys(this._registry).forEach(function (name) {
+      all[name] = _this2._registry[name];
+    });
 
-    return this.get( name)
+    return all;
   };
 
-  Runtime.prototype.$Runtime_buildFactory=function(name, builder, saveBuilder) {"use strict";
-    var instance= this.$Runtime_registry[ name],
-        manager= this.$Runtime_managers[ name],
-        return_value
+  Runtime.prototype.recreateStore = function recreateStore(name) {
+    var _this3 = this;
 
-    if( instance) {
-      this.$Runtime_warn( 'Storefront:', name, "already defined: Merging definitions.")
-    }
+    var manager = this.getManager(name);
 
-    if(! instance) {
-      instance= { name:name }
-      this.$Runtime_registry[ name]= instance
-    }
-    if(! manager) {
-      manager= new Manager( this, name, instance)
-      this.$Runtime_managers[ name]= manager
-      this.$Runtime_trackChangeFor( name)
+    if (manager) {
+      manager.resetInternals();
     }
 
-    if( kind.isFunction( builder)) {
-      return_value= builder( manager)
-    }
-    else if( kind.isObject( builder)) {
-      return_value= builder
-    }
-    else {
-      throw new Error( "Wrong builder type: Must provide a builder function or object.")
-    }
+    this._builders.filter(function (def) {
+      return def.name === name;
+    }).forEach(function (info) {
+      _this3._buildFactory(info.name, info.builder, false);
+    });
 
-    if( kind.isObject( return_value)) {
-      manager.expose( return_value)
-    }
-
-    if( this.settings.freezeInstance === true) {
-      Object.freeze( instance)
-    }
-
-    if( saveBuilder !== false) {
-      this.$Runtime_builders.push({ name:name, builder:builder, manager:manager })
-    }
-
-    return this.get( name)
+    return this.get(name);
   };
 
-  Runtime.prototype.$Runtime_trackChangeFor=function(name) {"use strict";
-    var event_name= name +':change'
-    this.$Runtime_emitter.on( event_name, function(){
-      this.$Runtime_dataChanges.push({ type:event_name, params:Array.prototype.slice.call(arguments)})
+  Runtime.prototype._buildFactory = function _buildFactory(name, builder, saveBuilder) {
+    var instance = this._registry[name],
+        manager = this._managers[name],
+        returnValue = undefined;
 
-      if(! this.$Runtime_timer) {
-        if( this.settings.useRAF && global.requestAnimationFrame) {
-          requestAnimationFrame( this.$Runtime_relayDataChanges.bind( this))
-        }
-        else {
-          process.nextTick( this.$Runtime_relayDataChanges.bind( this))
-        }
-        this.$Runtime_timer= true
+    if (instance) {
+      this._warn('Storefront:', name, 'already defined: Merging definitions.');
+    } else {
+      instance = { name: name };
+      this._registry[name] = instance;
+    }
+
+    if (!manager) {
+      manager = new _manager2['default'](this, name, instance);
+      this._managers[name] = manager;
+      this._trackChangeFor(name);
+    }
+
+    if (_elucidataType2['default'].isFunction(builder)) {
+      returnValue = builder(manager);
+    } else if (_elucidataType2['default'].isObject(builder)) {
+      returnValue = builder;
+    } else {
+      throw new Error('Wrong builder type: Must provide a builder function or object.');
+    }
+
+    if (_elucidataType2['default'].isObject(returnValue)) {
+      manager.expose(returnValue, true);
+    }
+
+    if (this.settings.freezeInstance === true) {
+      Object.freeze(instance);
+    }
+
+    if (saveBuilder !== false) {
+      this._builders.push({ name: name, builder: builder, manager: manager });
+    }
+
+    return this.get(name);
+  };
+
+  Runtime.prototype._trackChangeFor = function _trackChangeFor(name) {
+    var _this4 = this;
+
+    var eventName = '' + name + ':change';
+
+    this._emitter.on(eventName, function () {
+      for (var _len = arguments.length, params = Array(_len), _key = 0; _key < _len; _key++) {
+        params[_key] = arguments[_key];
       }
-    }.bind(this))
+
+      _this4._dataChanges.push({ type: eventName, params: params });
+
+      if (!_this4._timer) {
+        if (_this4.settings.useRAF && global.requestAnimationFrame) {
+          requestAnimationFrame(_this4._relayDataChanges.bind(_this4));
+        } else {
+          process.nextTick(_this4._relayDataChanges.bind(_this4));
+        }
+        _this4._timer = true;
+      }
+    });
   };
 
-  Runtime.prototype.$Runtime_stopTrackingChangesFor=function(name) {"use strict";
-    var event_name= name +':change'
-    this.$Runtime_emitter.removeListener( event_name)
+  Runtime.prototype._stopTrackingChangesFor = function _stopTrackingChangesFor(name) {
+    var eventName = '' + name + ':change';
+    this._emitter.removeListener(eventName);
   };
 
-  Runtime.prototype.$Runtime_relayDataChanges=function() {"use strict";
-    if( this.$Runtime_dataChanges.length) {
-      this.$Runtime_anyChangeEvent.emitNow( this.$Runtime_dataChanges)
-      this.$Runtime_dataChanges= []
+  Runtime.prototype._relayDataChanges = function _relayDataChanges() {
+    if (this._dataChanges.length) {
+      this._anyChangeEvent.emitNow(this._dataChanges);
+      this._dataChanges = [];
     }
-    this.$Runtime_timer= false
+    this._timer = false;
   };
 
-  Runtime.prototype.$Runtime_warn=function() {"use strict";
-    if( this.settings.verbose) {
-      console.warn.apply( console, arguments)
-    }
-  };
-  Runtime.prototype.$Runtime_info=function() {"use strict";
-    if( this.settings.verbose) {
-      console.info.apply( console, arguments)
+  Runtime.prototype._warn = function _warn() {
+    if (this.settings.verbose) {
+      _console2['default'].warn.apply(_console2['default'], arguments);
     }
   };
 
+  Runtime.prototype._info = function _info() {
+    if (this.settings.verbose) {
+      _console2['default'].info.apply(_console2['default'], arguments);
+    }
+  };
 
+  return Runtime;
+})();
 
-module.exports= Runtime
-
+exports['default'] = Runtime;
+module.exports = exports['default'];
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./alias":177,"./bind-all":178,"./camelize":179,"./console":180,"./create-event":181,"./dispatcher":182,"./event-helper-mixin":183,"./flatten":185,"./manager":186,"./merge":187,"./subscriptions":190,"./uid":191,"_process":13,"elucidata-type":192,"eventemitter3":193}],190:[function(require,module,exports){
-var camelize= require( './camelize'),
-    alias= require( './alias')
+},{"./alias":177,"./bind-all":178,"./camelize":179,"./console":180,"./create-event":181,"./dispatcher":182,"./ensure":183,"./event-helper-mixin":184,"./flatten":186,"./manager":187,"./merge":188,"./now":189,"./subscriptions":191,"./uid":192,"./version":193,"_process":13,"elucidata-type":194,"eventemitter3":195}],191:[function(require,module,exports){
+'use strict';
 
+exports.__esModule = true;
+exports['default'] = subscriptions;
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-  function Subscriptions(runtime) {"use strict";
-    this.$Subscriptions_runtime= runtime
-    this.$Subscriptions_storeListeners= []
-    alias( this, 'on', 'onStoreEvent', 'onEvent')
-    alias( this, 'release', 'off', 'releaseAll')
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _alias = require('./alias');
+
+var _alias2 = _interopRequireDefault(_alias);
+
+var _camelize = require('./camelize');
+
+var _camelize2 = _interopRequireDefault(_camelize);
+
+var Subscriptions = (function () {
+  function Subscriptions(runtime) {
+    _classCallCheck(this, Subscriptions);
+
+    this._runtime = runtime;
+    this._storeListeners = [];
+    (0, _alias2['default'])(this, 'on', 'onStoreEvent', 'onEvent');
+    (0, _alias2['default'])(this, 'release', 'off', 'releaseAll');
   }
 
-  Subscriptions.prototype.size=function() {"use strict";
-    return this.$Subscriptions_storeListeners.length
+  Subscriptions.prototype.size = function size() {
+    return this._storeListeners.length;
   };
 
-  Subscriptions.prototype.on=function(storeName, eventName, callback)  {"use strict";
-    storeName= storeName.name || storeName // in case they send a store instance
-    var store= this.$Subscriptions_runtime.getInstance( storeName), hookup
+  Subscriptions.prototype.on = function on(storeName, eventName, callback) {
+    storeName = storeName.name || storeName; // in case they send a store instance
 
-    if( store) {
-      eventName= camelize( eventName)
+    var store = this._runtime.getInstance(storeName),
+        hookup = null;
 
+    if (store) {
+      eventName = (0, _camelize2['default'])(eventName);
 
-      if( hookup= store[ 'on'+ eventName]) {  // jshint ignore:line
-        hookup( callback)
+      if (hookup = store['on' + eventName]) {
+        // jshint ignore:line
+        var disconnector = hookup(callback);
 
-        this.$Subscriptions_storeListeners.push({ storeName:storeName, eventName:eventName, callback:callback })
-      }
-      else {
-        if( this.$Subscriptions_runtime.settings.verbose) {
-          console.warn( "Storefront: Event", eventName, "isn't supported by store:", storeName)
+        this._storeListeners.push(disconnector);
+      } else {
+
+        if (this._runtime.settings.verbose) {
+          console.warn('Storefront: Event', eventName, 'isn\'t supported by store:', storeName);
         }
       }
-    }
-    else {
-      if( this.$Subscriptions_runtime.settings.verbose) {
-        console.warn( "Storefront: Store", storeName, "not found")
+    } else {
+
+      if (this._runtime.settings.verbose) {
+        console.warn('Storefront: Store', storeName, 'not found');
       }
     }
-    return this
+
+    return this;
   };
 
-  Subscriptions.prototype.release=function() {"use strict";
-    this.$Subscriptions_storeListeners.forEach(function( eventInfo) {
-      var $__0=   eventInfo,storeName=$__0.storeName,eventName=$__0.eventName,callback=$__0.callback,
-          store= this.$Subscriptions_runtime.getInstance( storeName)
-
-      store[ 'off'+ eventName]( callback )
-    }.bind(this))
-
-    this.$Subscriptions_storeListeners.length= 0
-    this.$Subscriptions_storeListeners= []
-    return this
+  Subscriptions.prototype.release = function release() {
+    this._storeListeners.forEach(function (disconnect) {
+      return disconnect();
+    });
+    this._storeListeners = [];
+    return this;
   };
 
+  return Subscriptions;
+})();
 
-
-module.exports=
-function subscriptions( runtime) {
-  return function() {
-    return new Subscriptions( runtime )
-  }
+function subscriptions(runtime) {
+  return function () {
+    return new Subscriptions(runtime);
+  };
 }
 
-},{"./alias":177,"./camelize":179}],191:[function(require,module,exports){
-var _last_id = 0
+module.exports = exports['default'];
+},{"./alias":177,"./camelize":179}],192:[function(require,module,exports){
+"use strict";
 
-function uid ( radix){
-  var now = Math.floor( (new Date()).getTime() / 1000 )
-  radix= radix || 36
+exports.__esModule = true;
+exports["default"] = uid;
+var _lastGeneratedUID = 0;
 
-  while ( now <= _last_id ) {
-    now += 1
+function uid() {
+  var radix = arguments[0] === undefined ? 36 : arguments[0];
+
+  var now = Math.floor(new Date().getTime() / 1000);
+
+  while (now <= _lastGeneratedUID) {
+    now += 1;
   }
 
-  _last_id= now
+  _lastGeneratedUID = now;
 
-  return now.toString( radix)
+  return now.toString(radix);
 }
 
-module.exports= uid
+module.exports = exports["default"];
+},{}],193:[function(require,module,exports){
+"use strict";
 
-},{}],192:[function(require,module,exports){
+module.exports = "0.8.1";
+},{}],194:[function(require,module,exports){
 module.exports=require(14)
-},{"/Users/darthapo/Projects/OpenSource/storefront-example/node_modules/elucidata-type/type.js":14}],193:[function(require,module,exports){
+},{"/Users/darthapo/Projects/OpenSource/storefront-example/node_modules/elucidata-type/type.js":14}],195:[function(require,module,exports){
 'use strict';
 
 //
@@ -21732,7 +22100,7 @@ EventEmitter.prefixed = prefix;
 //
 module.exports = EventEmitter;
 
-},{}],194:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 (function () {
     'use strict';
 
@@ -21794,7 +22162,7 @@ module.exports = EventEmitter;
     };
 }());
 
-},{"moment":195,"validator":196}],195:[function(require,module,exports){
+},{"moment":197,"validator":198}],197:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -24196,7 +24564,7 @@ module.exports = EventEmitter;
     }
 }).call(this);
 
-},{}],196:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 /*!
  * Copyright (c) 2014 Chris O'Hara <cohara87@gmail.com>
  *
@@ -24742,7 +25110,7 @@ module.exports = EventEmitter;
 
 });
 
-},{}],197:[function(require,module,exports){
+},{}],199:[function(require,module,exports){
 /*
 Author: Geraint Luff and others
 Year: 2013
